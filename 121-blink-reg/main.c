@@ -16,9 +16,9 @@ int main()
 
    while (1)
    {
-       *gpio_out_set = led_mask;
+       __asm volatile ("str %1, [%0]" : : "r"(gpio_out_set), "r" (led_mask) : "memory");
        sleep_ms(250);
-       *gpio_out_clr = led_mask;
+       __asm volatile ("str %1, [%0]" : : "r"(gpio_out_clr), "r" (led_mask) : "memory");
        sleep_ms(1000);
    }
 }

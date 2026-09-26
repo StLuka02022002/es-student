@@ -1,0 +1,32 @@
+задание: 2.1.2
+проект: 211-command-usb
+устройство: 2e8a:000a
+серийный номер: 505431654103311C
+порт: COM6
+начало: 2026-09-27T01:30:19
+   0.000 --> enable
+   0.124 <-- enable
+   0.126 <-- dbg read_line:104 got enable
+   0.128 <-- inf cmd_enable:31 led on
+   2.156 --> disable
+   2.304 <-- disable
+   2.305 <-- dbg read_line:104 got disable
+   2.307 <-- inf cmd_disable:37 led off
+   4.333 --> info
+   4.425 <-- info
+   4.426 <-- dbg read_line:104 got info
+   4.427 <-- project: 211-command-usb
+   4.429 <-- repo: https://github.com/StLuka02022002/es-student
+   4.430 <-- board: $PICO_BOARD
+   4.430 <-- serial: 505431654103311C
+   4.433 <-- chip: manufacturer 0x927, part 0x0002, revision 2
+   4.434 <-- pico-sdk: 2.3.0
+   6.457 --> ping
+   6.546 <-- ping
+   6.548 <-- dbg read_line:104 got ping
+   7.042 <-- pong
+   8.569 --> nosuchcommand
+   8.847 <-- nosuchcommand
+   8.848 <-- dbg read_line:104 got nosuchcommand
+   8.851 <-- err handle_command:86 unknown command: nosuchcommand
+итог: отправлено команд 5, принято строк 20

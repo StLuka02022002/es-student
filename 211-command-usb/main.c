@@ -3,6 +3,7 @@
 #include "led.h"
 #include "log.h"
 #include "device.h"
+#include "memory.h"
 #include <string.h>
 
 #define LINE_SIZE 32
@@ -47,9 +48,14 @@ void cmd_version(void)
 	log_version();
 }
 
-void cmp_ping(void)
+void cmd_ping(void)
 {
 	printf("pong");
+}
+
+void cmd_mem_info(void)
+{
+	mem_info();
 }
 
 struct command_t
@@ -63,7 +69,8 @@ const struct command_t commands[] = {
 	{"disable", cmd_disable},
 	{"info", cmd_info},
 	{"version", cmd_version},
-	{"ping", cmp_ping},
+	{"ping", cmd_ping},
+	{"mem_info", cmd_mem_info},
 };
 
 #define COMMND_COUNT (sizeof(commands) / sizeof(commands[0]))

@@ -129,7 +129,7 @@ void boot_info(void)
     printf("%-15s 0x%08x\n", "  stack top", (uintptr_t)stack_top);
     printf("%-15s 0x%08x\n", "  reset", (uintptr_t)reset_handler);
     printf("%-15s 0x%08x\n", "  reset (even)", handler_code);
-    printf("%-13s 0x%08x\n", "gprio in", (uintptr_t)gpio_in);
+    printf("%-13s 0x%08x\n", "gpio in", (uintptr_t)gpio_in);
     printf("%-15s %u\n", "  led bit", level);
-    printf("%-15s %u\n", "  gptio_get", gpio_get(led_pin()));
+    printf("%-15s %u\n", "  gpio_get", gpio_get(led_pin()));
 }

@@ -44,5 +44,5 @@ void dev_info(void)
     unsigned fields = sizeof(device_card.revision) + sizeof(device_card.version) +
                       sizeof(device_card.name);
     unsigned device_card_size = sizeof(device_card);
-    printf("fields %u, sizeof %u, paddindg %u", fields, device_card_size, device_card_size - fields);
+    printf("fields %u, sizeof %u, paddindg %u\n", fields, device_card_size, device_card_size - fields);
 }

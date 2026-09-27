@@ -108,3 +108,10 @@ void mem_info(void)
     printf("  %-12s %9u = data %u + bss %u\n", "ram used", ram_used, data, bss);
     printf("  %-12s %9u for heep and %u for stack\n", "ram free", heep, stack);
 }
+
+void boot_info(void){
+    const uint32_t *vectors = (const uint32_t *)VECTOR_TABLE;
+    
+    uint32_t stack_top = vectors[0];
+    uint32_t reset_handler = vectors[1];
+}

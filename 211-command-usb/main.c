@@ -4,6 +4,7 @@
 #include "log.h"
 #include "device.h"
 #include "memory.h"
+#include "command.h"
 #include <string.h>
 
 #define LINE_SIZE 32
@@ -16,8 +17,6 @@ const uint BUTTON_PIN = 15;
 const uint DEBOUNCE_MS = 20;
 
 bool previous = false;
-
-typedef void (*command_handler_t)(void);
 
 bool get_button_debounce(uint pin)
 {
@@ -53,16 +52,15 @@ void cmd_ping(void)
 	printf("pong");
 }
 
+void cmd_fw_info(void)
+{
+	fw_info();
+}
+
 void cmd_mem_info(void)
 {
 	mem_info();
 }
-
-struct command_t
-{
-	const char *name;
-	command_handler_t handler;
-};
 
 const struct command_t commands[] = {
 	{"enable", cmd_enable},
@@ -71,13 +69,14 @@ const struct command_t commands[] = {
 	{"version", cmd_version},
 	{"ping", cmd_ping},
 	{"mem_info", cmd_mem_info},
+	{"fw_info", cmd_fw_info},
 };
 
-#define COMMND_COUNT (sizeof(commands) / sizeof(commands[0]))
+const uint command_count = (sizeof(commands) / sizeof(commands[0]));
 
 void handle_command(const char *command)
 {
-	for (uint i = 0; i < COMMND_COUNT; i++)
+	for (uint i = 0; i < command_count; i++)
 	{
 		if (strcmp(command, commands[i].name) == 0)
 		{

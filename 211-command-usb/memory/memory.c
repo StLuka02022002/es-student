@@ -2,6 +2,12 @@
 #include <stdio.h>
 #include "hardware/regs/addressmap.h"
 #include "pico/stdlib.h"
+#include "../command.h"
+#include "device.h"
+#include "string.h"
+#include <stdlib.h>
+
+int main(void);
 
 extern char __flash_binary_start;
 extern char __flash_binary_end;
@@ -16,10 +22,50 @@ extern char __HeapLimit;
 extern char __StackBottom;
 extern char __StackTop;
 
+uint32_t data_variable = 100;
+uint32_t bss_variable;
+
 static void row(const char *name, uintptr_t start, uintptr_t end)
 {
     printf("%-10s 0x%08x 0x%08x %8u\n",
            name, (unsigned)start, (unsigned)end, (unsigned)(end - start));
+}
+
+void fw_info()
+{
+    data_variable++;
+    bss_variable++;
+    uint32_t stack_variable = 1946;
+    uint32_t *heap_variable = malloc(sizeof(uint32_t));
+
+    uint16_t *main_code = (uint16_t *)((uintptr_t)main & ~1u);
+    uint16_t *fw_info_code = (uint16_t *)((uintptr_t)fw_info & ~1u);
+
+    if (heap_variable != NULL)
+    {
+        *heap_variable = 1951;
+    }
+
+    printf("%-10s %-8s %s\n", "object", "address", "value");
+    printf("%-10s 0x%08x %04x\n", "main", (uintptr_t)main, *main_code);
+
+    printf("%-10s 0x%08x %04x\n", "fw_info", (uintptr_t)fw_info, *fw_info_code);
+    printf("%-10s 0x%08x\n", "commands", (uintptr_t)&commands);
+    for (uint i = 0; i < command_count; i++)
+    {
+        char line[32];
+        snprintf(line, sizeof(line), "- %s", commands[i].name);
+        printf("%-10s 0x%08x\n", line, (uintptr_t)commands[i].handler);
+    }
+
+    printf("%-10s 0x%08x %s\n", "DEVICE_PROJECT", (uintptr_t)DEVICE_PROJECT, DEVICE_PROJECT);
+    printf("%-10s 0x%08x %s\n", "DEVICE_BOARD", (uintptr_t)DEVICE_BOARD, DEVICE_BOARD);
+    printf("%-10s 0x%08x %u\n", "data_variable", (uintptr_t)&data_variable, data_variable);
+    printf("%-10s 0x%08x %u\n", "bss_variable", (uintptr_t)&bss_variable, bss_variable);
+    printf("%-10s 0x%08x %u\n", "stack_variable", (uintptr_t)&stack_variable, stack_variable);
+    printf("%-10s 0x%08x %u\n", "heap_variable", (uintptr_t)heap_variable, *heap_variable);
+
+    free(heap_variable);
 }
 
 void mem_info(void)

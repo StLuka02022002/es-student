@@ -9,6 +9,9 @@
 #include "led.h"
 #include <stdlib.h>
 
+#define VECTOR_TABLE 0x10000100
+volatile uint32_t *gpio_in = (uint32_t *)0xd0000004;
+
 int main(void);
 
 extern char __flash_binary_start;
@@ -118,7 +121,6 @@ void boot_info(void)
     uint32_t stack_top = vectors[0];
     uint32_t reset_handler = vectors[1];
 
-    uint32_t *gpio_in = (uint32_t *)0xd0000004;
     uint32_t level = (*gpio_in >> led_pin()) & 1u;
 
     uint16_t *handler_code = (uint16_t *)((uintptr_t)reset_handler & ~1u);

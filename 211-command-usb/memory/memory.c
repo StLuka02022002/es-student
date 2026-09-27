@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include "hardware/regs/addressmap.h"
 #include "pico/stdlib.h"
+#include "hardware/gpio.h"
 #include "../command.h"
 #include "device.h"
 #include "string.h"
+#include "led.h"
 #include <stdlib.h>
 
 int main(void);
@@ -109,9 +111,23 @@ void mem_info(void)
     printf("  %-12s %9u for heep and %u for stack\n", "ram free", heep, stack);
 }
 
-void boot_info(void){
+void boot_info(void)
+{
     const uint32_t *vectors = (const uint32_t *)VECTOR_TABLE;
-    
+
     uint32_t stack_top = vectors[0];
     uint32_t reset_handler = vectors[1];
+
+    uint32_t *gpio_in = (uint32_t *)0xd0000004;
+    uint32_t level = (*gpio_in >> led_pin()) & 1u;
+
+    uint16_t *handler_code = (uint16_t *)((uintptr_t)reset_handler & ~1u);
+
+    printf("%-13s 0x%08x\n", "vector table", vectors);
+    printf("%-15s 0x%08x\n", "  stack top", (uintptr_t)stack_top);
+    printf("%-15s 0x%08x\n", "  reset", (uintptr_t)reset_handler);
+    printf("%-15s 0x%08x\n", "  reset (even)", handler_code);
+    printf("%-13s 0x%08x\n", "gprio in", (uintptr_t)gpio_in);
+    printf("%-15s %u\n", "  led bit", level);
+    printf("%-15s %u\n", "  gptio_get", gpio_get(led_pin()));
 }

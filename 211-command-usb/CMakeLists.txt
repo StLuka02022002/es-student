@@ -21,6 +21,7 @@ target_include_directories(${PROJECT_NAME}
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/logging
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/device
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/memory
+	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 )
 pico_set_linker_script(
 	${PROJECT_NAME}

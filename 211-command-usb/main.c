@@ -72,7 +72,7 @@ const struct command_t commands[] = {
 	{"fw_info", cmd_fw_info},
 };
 
-const uint command_count = (sizeof(commands) / sizeof(commands[0]));
+const uint command_count = sizeof(commands) / sizeof(commands[0]);
 
 void handle_command(const char *command)
 {

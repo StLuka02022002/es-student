@@ -6,7 +6,7 @@
 
 static void row(const char *name, uint32_t set_khz, uint32_t meashured_khz)
 {
-    printf("%-8s %9u %12u\n", name, (unsigned) set_khz, (unsigned)meashured_khz);
+    printf("%-8s %9u %12u\n", name, (unsigned)set_khz, (unsigned)meashured_khz);
 }
 
 void clk_info(void)
@@ -14,12 +14,27 @@ void clk_info(void)
     printf("%-8s %-9s %-12s\n", "signal", "set_khz", "measured_khz");
     row("clk_ref", clock_get_hz(clk_ref) / 1000, frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_REF));
     row("clk_sys", clock_get_hz(clk_sys) / 1000, frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_SYS));
-    row("clk_peri", clock_get_hz(clk_peri)/1000, frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_PERI));
-    row("clk_usb", clock_get_hz(clk_usb)/1000, frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_USB));
-    row("clk_adc", clock_get_hz(clk_adc)/1000, frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_ADC));
-     printf("%-8s %9s %12u\n", "rosc", "-", frequency_count_khz(CLOCKS_FC0_SRC_VALUE_ROSC_CLKSRC));
+    row("clk_peri", clock_get_hz(clk_peri) / 1000, frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_PERI));
+    row("clk_usb", clock_get_hz(clk_usb) / 1000, frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_USB));
+    row("clk_adc", clock_get_hz(clk_adc) / 1000, frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_ADC));
+    printf("%-8s %9s %12u\n", "rosc", "-", frequency_count_khz(CLOCKS_FC0_SRC_VALUE_ROSC_CLKSRC));
 }
 
-void uptime (void){
-    printf("uptime: %llu ms\n", time_us_64()/1000);
+void uptime(void)
+{
+    printf("uptime: %llu ms\n", time_us_64() / 1000);
+}
+
+double calc_pi(uint terms)
+{
+    double sum = 0.0;
+    double sign = 1.0;
+
+    for (int k = 0; k < terms; k++)
+    {
+        sum += sign / (2.0 * k + 1.0);
+        sign = -sign;
+    }
+
+    return 4.0 * sum;
 }

@@ -36,7 +36,7 @@ static void clk_sys_set(uint32_t khz)
 {
     if (set_sys_clock_khz(khz, false))
     {
-        LOG_INF("clk_sys %u kKz\n", (unsigned)khz);
+        LOG_INF("clk_sys %u kHz\n", (unsigned)khz);
     }
     else
     {

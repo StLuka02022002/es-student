@@ -4,7 +4,7 @@
 
 // итерация около 2 мкс, за секунду их около 500 000;
 // ближайшая степень двойки 2^19 = 524 288, среднее помнит около секунды
-#define AVG_SHIFT 17
+#define AVG_SHIFT 19
 // замер в 1/256 долях микросекунды, чтобы среднее не теряло дробную часть
 #define FRACTION_SHIFT 8
 
@@ -27,7 +27,7 @@ void profiling_iteration(void)
         max_us = iteration_us;
     }
 
-    avg_sum = avg_sum - (avg_sum >> AVG_SHIFT) + ((uint64_t)iteration_us) << FRACTION_SHIFT;
+    avg_sum = avg_sum - (avg_sum >> AVG_SHIFT) + ((uint64_t)iteration_us << FRACTION_SHIFT);
 }
 float profiling_avg_us(void)
 {

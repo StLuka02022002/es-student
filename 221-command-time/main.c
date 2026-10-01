@@ -5,6 +5,7 @@
 #include "memory.h"
 #include "command.h"
 #include "clock.h"
+#include "profiling.h"
 #include <string.h>
 
 #define LINE_SIZE 32
@@ -24,16 +25,16 @@ uint line_length = 0;
 
 double calc_pi(uint terms)
 {
-    double sum = 0.0;
-    double sign = 1.0;
+	double sum = 0.0;
+	double sign = 1.0;
 
-    for (int k = 0; k < terms; k++)
-    {
-        sum += sign / (2.0 * k + 1.0);
-        sign = -sign;
-    }
+	for (int k = 0; k < terms; k++)
+	{
+		sum += sign / (2.0 * k + 1.0);
+		sign = -sign;
+	}
 
-    return 4.0 * sum;
+	return 4.0 * sum;
 }
 
 void blink(void)
@@ -101,6 +102,17 @@ void cmd_calc_pi(void)
 	printf("time: %llu ms\n", spent_us / 1000);
 }
 
+void main_time_exec(void)
+{
+	printf("iteration avg %.2f us, max %u us\n", profiling_avg_us(), (unsigned)profiling_max_us());
+}
+
+void main_time_reset(void)
+{
+	profiling_reset_max();
+	printf("max reset\n");
+}
+
 const struct command_t commands[] = {
 	{"info", cmd_info},
 	{"version", cmd_version},
@@ -112,6 +124,8 @@ const struct command_t commands[] = {
 	{"clk_info", cmd_clk_info},
 	{"uptime", cmd_uptime},
 	{"calc_pi", cmd_calc_pi},
+	{"main_time_exec", main_time_exec},
+	{"main_time_reset", main_time_reset},
 };
 
 const uint command_count = sizeof(commands) / sizeof(commands[0]);
@@ -169,10 +183,11 @@ int main()
 {
 	stdio_init_all();
 	led_init();
+	profiling_init();
 
 	while (1)
 	{
-
+		profiling_interation();
 		blink();
 
 		read_line();

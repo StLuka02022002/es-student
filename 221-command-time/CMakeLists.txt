@@ -14,6 +14,7 @@ add_executable(${PROJECT_NAME}
 	${CMAKE_CURRENT_SOURCE_DIR}/device/device.c
 	${CMAKE_CURRENT_SOURCE_DIR}/memory/memory.c
 	${CMAKE_CURRENT_SOURCE_DIR}/clock/clock.c
+	${CMAKE_CURRENT_SOURCE_DIR}/profiling/profiling.c
 )
 target_link_libraries(${PROJECT_NAME} pico_stdlib pico_unique_id)
 target_compile_definitions(${PROJECT_NAME} PRIVATE DEVICE_BOARD="${PICO_BOARD}")
@@ -23,6 +24,7 @@ target_include_directories(${PROJECT_NAME}
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/device
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/memory
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/clock
+	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/profiling
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 )
 pico_set_linker_script(

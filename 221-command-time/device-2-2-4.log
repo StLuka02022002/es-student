@@ -3,34 +3,34 @@
 устройство: 2e8a:000a
 серийный номер: 505431654103311C
 порт: COM6
-начало: 2026-10-01T18:03:45
+начало: 2026-10-01T18:17:25
    0.000 --> main_time_reset
    0.001 <-- main_time_reset
-   0.002 <-- dbg read_line:168 got main_time_reset
-   0.002 <-- max reset
-   2.059 --> main_time_exec
-   2.060 <-- main_time_exec
-   2.061 <-- dbg read_line:168 got main_time_exec
-   2.062 <-- iteration avg 5.34e+10 us, max 484 us
-   3.104 --> calc_pi
-   3.104 <-- calc_pi
-   3.105 <-- dbg read_line:168 got calc_pi
-   7.812 <-- pi: 3.14159165
-   7.813 <-- time: 4706 ms
-   9.250 --> main_time_exec
-   9.251 <-- main_time_exec
-   9.252 <-- dbg read_line:168 got main_time_exec
-   9.254 <-- iteration avg 1.22e+10 us, max 4707141 us
-  14.418 --> main_time_exec
-  14.419 <-- main_time_exec
-  14.420 <-- dbg read_line:168 got main_time_exec
-  14.421 <-- iteration avg 5.57e+10 us, max 4707141 us
-  15.456 --> main_time_reset
-  15.457 <-- main_time_reset
-  15.458 <-- dbg read_line:168 got main_time_reset
-  15.459 <-- max reset
-  16.489 --> main_time_exec
-  16.490 <-- main_time_exec
-  16.492 <-- dbg read_line:168 got main_time_exec
-  16.493 <-- iteration avg 8.08e+10 us, max 235 us
+   0.003 <-- dbg read_line:168 got main_time_reset
+   0.004 <-- max reset
+   2.083 --> main_time_exec
+   2.084 <-- main_time_exec
+   2.086 <-- dbg read_line:168 got main_time_exec
+   2.087 <-- iteration avg 3.74e+11 us, max 482 us
+   3.117 --> calc_pi
+   3.117 <-- calc_pi
+   3.118 <-- dbg read_line:168 got calc_pi
+   7.825 <-- pi: 3.14159165
+   7.826 <-- time: 4706 ms
+   9.270 --> main_time_exec
+   9.271 <-- main_time_exec
+   9.273 <-- dbg read_line:168 got main_time_exec
+   9.275 <-- iteration avg 3.28e+11 us, max 4707148 us
+  14.445 --> main_time_exec
+  14.446 <-- main_time_exec
+  14.447 <-- dbg read_line:168 got main_time_exec
+  14.449 <-- iteration avg 2.73e+10 us, max 4707148 us
+  15.477 --> main_time_reset
+  15.478 <-- main_time_reset
+  15.480 <-- dbg read_line:168 got main_time_reset
+  15.480 <-- max reset
+  16.490 --> main_time_exec
+  16.491 <-- main_time_exec
+  16.493 <-- dbg read_line:168 got main_time_exec
+  16.494 <-- iteration avg 2.17e+11 us, max 200 us
 итог: отправлено команд 7, принято строк 22

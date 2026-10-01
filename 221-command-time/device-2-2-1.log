@@ -1,0 +1,26 @@
+задание: 2.2.1
+проект: 221-command-time
+устройство: 2e8a:000a
+серийный номер: 505431654103311C
+порт: COM6
+начало: 2026-10-01T15:47:48
+   0.000 --> clk_info
+   0.167 <-- clk_info
+   0.169 <-- dbg read_line:129 got clk_info
+   0.170 <-- signal   set_khz   measured_khz
+   0.172 <-- clk_ref      12000        12001
+   0.174 <-- clk_sys     125000       125000
+   0.177 <-- clk_peri    125000       125000
+   0.178 <-- clk_usb      48000        48000
+   0.179 <-- clk_adc      48000        48000
+   0.180 <-- rosc             -         5515
+   2.041 --> info
+   2.134 <-- info
+   2.135 <-- dbg read_line:129 got info
+   2.136 <-- project: 221-command-time
+   2.138 <-- repo: https://github.com/StLuka02022002/es-student
+   2.138 <-- board: pico
+   2.139 <-- serial: 505431654103311C
+   2.140 <-- chip: manufacturer 0x927, part 0x0002, revision 2
+   2.141 <-- pico-sdk: 2.3.0
+итог: отправлено команд 2, принято строк 17

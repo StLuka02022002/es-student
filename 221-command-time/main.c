@@ -11,6 +11,8 @@
 
 const uint BLINK_HALF_PRIODS_MS = 500;
 
+// прикидка: за член ряда 4 операции с double, 175 + 110 + 190 + 110 = 585 тактов;
+// 1 000 000 членов по 585 тактов при 125 МГц — около 4,7 с
 const uint CALC_PI_TERMS = 1000000;
 
 uint64_t last_toggle_us = 0;
@@ -19,6 +21,20 @@ volatile double pi_result;
 
 char line[LINE_SIZE];
 uint line_length = 0;
+
+double calc_pi(uint terms)
+{
+    double sum = 0.0;
+    double sign = 1.0;
+
+    for (int k = 0; k < terms; k++)
+    {
+        sum += sign / (2.0 * k + 1.0);
+        sign = -sign;
+    }
+
+    return 4.0 * sum;
+}
 
 void blink(void)
 {

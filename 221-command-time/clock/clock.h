@@ -4,5 +4,3 @@
 void clk_info(void);
 
 void uptime(void);
-
-double calc_pi(uint terms);

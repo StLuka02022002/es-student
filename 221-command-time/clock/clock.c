@@ -25,16 +25,3 @@ void uptime(void)
     printf("uptime: %llu ms\n", time_us_64() / 1000);
 }
 
-double calc_pi(uint terms)
-{
-    double sum = 0.0;
-    double sign = 1.0;
-
-    for (int k = 0; k < terms; k++)
-    {
-        sum += sign / (2.0 * k + 1.0);
-        sign = -sign;
-    }
-
-    return 4.0 * sum;
-}

@@ -17,7 +17,7 @@ void profiling_init(void)
 {
     previous_us = time_us_32();
 }
-void profiling_interation(void)
+void profiling_iteration(void)
 {
     uint32_t now_us = time_us_32();
     uint32_t iteration_us = now_us - previous_us;

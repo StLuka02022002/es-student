@@ -189,7 +189,7 @@ int main()
 
 	while (1)
 	{
-		profiling_interation();
+		profiling_iteration();
 		blink();
 
 		read_line();

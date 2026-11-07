@@ -9,23 +9,13 @@
 #include <stdint.h>
 #include "profiling.h"
 #include "device.h"
-#include "led.h"
+
+#include "led-task.h"
 
 #define BUTTON_PIN 15
 #define DEBOUNCE_MS 5
 #define DEFAULT_PI_TERMS 1000
 #define PI_CHUNK_TERMS 100
-
-typedef enum
-{
-    LED_STATE_OFF,
-    LED_STATE_ON,
-    LED_STATE_BLINK,
-} led_state_t;
-
-static led_state_t led_state = LED_STATE_OFF;
-static uint64_t period_us = 1000 * 1000;
-static uint64_t last_toggle_us = 0;
 
 static int32_t button_count = 0;
 static bool button_prev = true;
@@ -77,25 +67,16 @@ const size_t api_command_count = sizeof(commands) / sizeof(commands[0]);
 
 void api_init(void)
 {
-    led_init();
     gpio_init(BUTTON_PIN);
     gpio_set_dir(BUTTON_PIN, GPIO_IN);
     gpio_pull_up(BUTTON_PIN);
     button_prev = gpio_get(BUTTON_PIN);
-
-    led_set(false);
-    led_state = LED_STATE_OFF;
 
     profiling_init();
 }
 
 void api_update(void)
 {
-    if (led_state == LED_STATE_BLINK)
-    {
-        blink();
-    }
-
     if (get_button_pressed())
     {
         button_count++;
@@ -153,22 +134,19 @@ void cmd_uptime(const command_t *)
 
 void cmd_led_enable(const command_t *)
 {
-    led_state = LED_STATE_ON;
-    led_set(true);
+    led_task_set_state(LED_STATE_ON);
     print_led_state();
 }
 
 void cmd_led_disable(const command_t *)
 {
-    led_state = LED_STATE_OFF;
-    led_set(false);
+    led_task_set_state(LED_STATE_OFF);
     print_led_state();
 }
 
 void cmd_led_blink(const command_t *)
 {
-    led_state = LED_STATE_BLINK;
-    last_toggle_us = 0;
+    led_task_set_state(LED_STATE_BLINK);
     print_led_state();
 }
 
@@ -181,20 +159,19 @@ void cmd_led_period(const command_t *command)
         printf("error: usage led_period <period_ms>\n");
         return;
     }
-    if (period_ms == 0)
+    if (!led_task_set_period_ms(period_ms))
     {
         printf("error: period_ms must be greater than 0\n");
         return;
     }
 
-    period_us = (uint64_t)period_ms * 1000;
     print_led_state();
 }
 
 static void print_led_state(void)
 {
     printf("led: ");
-    switch (led_state)
+    switch (led_task_get_state())
     {
     case LED_STATE_ON:
     {
@@ -212,17 +189,7 @@ static void print_led_state(void)
         break;
     }
     }
-    printf(", period %u ms\n", (uint32_t) period_us / 1000);
-}
-
-static void blink(void)
-{
-    uint64_t now_us = time_us_64();
-    if (now_us - last_toggle_us >= period_us)
-    {
-        last_toggle_us = now_us;
-        led_toggle();
-    }
+    printf(", period %u ms\n", led_task_get_period_ms());
 }
 
 static bool get_button_pressed(void)

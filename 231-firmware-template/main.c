@@ -1,11 +1,13 @@
 #include "pico/stdlib.h"
 #include "stdio-text-protocol.h"
 #include "api.h"
+#include "led-task.h"
 
 int main()
 {
 	stdio_text_protocol_init();
 	api_init();
+	led_task_init();
 
 	while (1)
 	{
@@ -15,5 +17,6 @@ int main()
 			api_handle(command);
 		}
 		api_update();
+		led_task_handle();
 	}
 }

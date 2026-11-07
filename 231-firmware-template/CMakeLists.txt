@@ -7,6 +7,8 @@ include(pico_sdk_import.cmake)
 project(231_firmware_template)
 pico_sdk_init()
 
+add_compile_options(-Wall)
+
 add_executable(${PROJECT_NAME}
 	${CMAKE_CURRENT_SOURCE_DIR}/main.c
 	${CMAKE_CURRENT_SOURCE_DIR}/led/led.c
@@ -15,6 +17,7 @@ add_executable(${PROJECT_NAME}
 	${CMAKE_CURRENT_SOURCE_DIR}/profiling/profiling.c
 	${CMAKE_CURRENT_SOURCE_DIR}/stdio-text-protocol/stdio-text-protocol.c
 	${CMAKE_CURRENT_SOURCE_DIR}/api/api.c
+	${CMAKE_CURRENT_SOURCE_DIR}/led-task/led-task.c
 )
 target_link_libraries(${PROJECT_NAME} pico_stdlib pico_unique_id)
 target_compile_definitions(${PROJECT_NAME} PRIVATE DEVICE_BOARD="${PICO_BOARD}")
@@ -25,6 +28,7 @@ target_include_directories(${PROJECT_NAME}
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/profiling
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/stdio-text-protocol
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/api
+	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/led-task
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 )
 

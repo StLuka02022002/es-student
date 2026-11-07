@@ -2,9 +2,11 @@
 #include "led.h"
 #include "pico/time.h"
 
-static uint32_t half_period_us;
+static uint64_t half_period_us;
 static led_state_t led_state;
 static uint64_t last_toggle_us;
+
+static bool period_elapsed(uint64_t *last_us, uint64_t period_us);
 
 void led_task_init(void)
 {
@@ -20,10 +22,8 @@ void led_task_handle(void)
     {
     case LED_STATE_BLINK:
     {
-        uint64_t now_us = time_us_64();
-        if (now_us - last_toggle_us >= half_period_us)
+        if (period_elapsed(&last_toggle_us, half_period_us))
         {
-            last_toggle_us = now_us;
             led_toggle();
         }
         break;
@@ -62,7 +62,7 @@ bool led_task_set_period_ms(uint32_t period_ms)
 {
     if (period_ms > 0)
     {
-        half_period_us = (period_ms * 1000) / 2;
+        half_period_us = ((uint64_t)period_ms * 1000) / 2;
         return true;
     }
     return false;
@@ -70,5 +70,24 @@ bool led_task_set_period_ms(uint32_t period_ms)
 
 uint32_t led_task_get_period_ms(void)
 {
-    return (2u * half_period_us) / 1000;
+    return 2u * (uint32_t)(half_period_us / 1000);
+}
+
+static bool period_elapsed(uint64_t *last_us, uint64_t period_us)
+{
+
+    uint64_t now_us = time_us_64();
+    if (now_us - *last_us < period_us)
+    {
+        return false;
+    }
+
+    *last_us += period_us;
+
+    if (now_us - *last_us >= period_us)
+    {
+        *last_us = now_us;
+    }
+
+    return true;
 }

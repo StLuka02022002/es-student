@@ -11,14 +11,10 @@
 #include "device.h"
 
 #include "led-task.h"
+#include "button-task.h"
 
-#define BUTTON_PIN 15
-#define DEBOUNCE_MS 5
 #define DEFAULT_PI_TERMS 1000
 #define PI_CHUNK_TERMS 100
-
-static int32_t button_count = 0;
-static bool button_prev = true;
 
 static bool running_pi = false;
 static uint32_t terms_pi = DEFAULT_PI_TERMS;
@@ -34,7 +30,6 @@ static void print_led_state(void);
 static void blink(void);
 static void calc_pi(void);
 static bool parse_u32(const char *text, uint32_t *value);
-static bool get_button_pressed(void);
 
 void cmd_info(const command_t *);
 void cmd_uptime(const command_t *);
@@ -67,21 +62,11 @@ const size_t api_command_count = sizeof(commands) / sizeof(commands[0]);
 
 void api_init(void)
 {
-    gpio_init(BUTTON_PIN);
-    gpio_set_dir(BUTTON_PIN, GPIO_IN);
-    gpio_pull_up(BUTTON_PIN);
-    button_prev = gpio_get(BUTTON_PIN);
-
     profiling_init();
 }
 
 void api_update(void)
 {
-    if (get_button_pressed())
-    {
-        button_count++;
-    }
-
     if (running_pi)
     {
         calc_pi();
@@ -129,7 +114,7 @@ void cmd_info(const command_t *)
 
 void cmd_uptime(const command_t *)
 {
-    printf("uptime: %u ms\n", time_us_64() / 1000);
+    printf("uptime: %u ms\n", (uint32_t) (time_us_64() / 1000));
 }
 
 void cmd_led_enable(const command_t *)
@@ -192,41 +177,10 @@ static void print_led_state(void)
     printf(", period %u ms\n", led_task_get_period_ms());
 }
 
-static bool get_button_pressed(void)
-{
-    static uint64_t last_change_us = 0;
-    static bool stable_state = true;
-    static bool reported = false;
-
-    bool raw = gpio_get(BUTTON_PIN);
-    uint64_t now = time_us_64();
-
-    if (raw != stable_state)
-    {
-        last_change_us = now;
-        stable_state = raw;
-        reported = false;
-        return false;
-    }
-
-    if (!reported && (now - last_change_us) >= (uint64_t)DEBOUNCE_MS * 1000)
-    {
-        reported = true;
-        if (stable_state == false && button_prev == true)
-        {
-            button_prev = false;
-            return true;
-        }
-        button_prev = stable_state;
-    }
-    return false;
-}
-
 void cmd_button(const command_t *)
 {
-    bool pressed = (gpio_get(BUTTON_PIN) == 0);
-    printf("button: %s, presses %" PRId32 "\n",
-           pressed ? "pressed" : "released", button_count);
+    printf("button: %s, presses %u\n",
+           button_task_is_pressed() ? "pressed" : "released", button_task_get_press_count());
 }
 
 void cmd_pi_start(const command_t *command)
@@ -279,7 +233,7 @@ void cmd_pi(const command_t *)
         return;
     }
 
-    printf("pi: %.9f in %u ms\n", result_pi, (end_pi - start_pi) / 1000);
+    printf("pi: %.9f in %u ms\n", result_pi, (uint32_t) ((end_pi - start_pi) / 1000));
 }
 
 static void calc_pi(void)

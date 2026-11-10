@@ -77,7 +77,8 @@ static bool period_elapsed(uint64_t *last_us, uint64_t period_us)
 {
     uint64_t now_us = time_us_64();
 
-    if (now_us - *last_us < period_us) {
+    if (now_us - *last_us < period_us)
+    {
         return false;
     }
 
@@ -85,9 +86,28 @@ static bool period_elapsed(uint64_t *last_us, uint64_t period_us)
     *last_us += period_us;
 
     // Отстали больше чем на период: не догонять, а начать отсчёт заново
-    if (now_us - *last_us >= period_us) {
+    if (now_us - *last_us >= period_us)
+    {
         *last_us = now_us;
     }
 
     return true;
+}
+
+void led_task_next_state(void)
+{
+    switch (led_state)
+    {
+    case LED_STATE_OFF:
+        led_task_set_state(LED_STATE_ON);
+        break;
+    case LED_STATE_ON:
+        led_task_set_state(LED_STATE_BLINK);
+        break;
+    case LED_STATE_BLINK:
+        led_task_set_state(LED_STATE_OFF);
+        break;
+    default:
+        break;
+    }
 }

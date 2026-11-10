@@ -3,6 +3,7 @@
 #include "api.h"
 #include "led-task.h"
 #include "button-task.h"
+#include "pi-task.h"
 
 int main()
 {
@@ -10,6 +11,7 @@ int main()
 	api_init();
 	led_task_init();
 	button_task_init();
+	pi_task_init();
 
 	while (1)
 	{
@@ -21,5 +23,6 @@ int main()
 		api_update();
 		led_task_handle();
 		button_task_handle();
+		pi_task_handle();
 	}
 }

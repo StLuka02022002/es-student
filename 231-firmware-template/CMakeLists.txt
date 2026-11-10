@@ -19,6 +19,7 @@ add_executable(${PROJECT_NAME}
 	${CMAKE_CURRENT_SOURCE_DIR}/api/api.c
 	${CMAKE_CURRENT_SOURCE_DIR}/led-task/led-task.c
 	${CMAKE_CURRENT_SOURCE_DIR}/button-task/button-task.c
+	${CMAKE_CURRENT_SOURCE_DIR}/pi-task/pi-task.c
 )
 target_link_libraries(${PROJECT_NAME} pico_stdlib pico_unique_id)
 target_compile_definitions(${PROJECT_NAME} PRIVATE DEVICE_BOARD="${PICO_BOARD}")
@@ -31,6 +32,7 @@ target_include_directories(${PROJECT_NAME}
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/api
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/led-task
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/button-task
+	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/pi-task
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 )
 

@@ -12,18 +12,7 @@
 
 #include "led-task.h"
 #include "button-task.h"
-
-#define DEFAULT_PI_TERMS 1000
-#define PI_CHUNK_TERMS 100
-
-static bool running_pi = false;
-static uint32_t terms_pi = DEFAULT_PI_TERMS;
-static double result_pi = -1.0;
-static double current_sum = 0.0;
-static double current_sign = 1.0;
-static uint32_t current_k = 0;
-static uint64_t start_pi = 0;
-static uint64_t end_pi = 0;
+#include "pi-task.h"
 
 static void cmd_help(const command_t *);
 static void print_led_state(void);
@@ -67,11 +56,6 @@ void api_init(void)
 
 void api_update(void)
 {
-    if (running_pi)
-    {
-        calc_pi();
-    }
-
     profiling_iteration();
 }
 
@@ -114,7 +98,7 @@ void cmd_info(const command_t *)
 
 void cmd_uptime(const command_t *)
 {
-    printf("uptime: %u ms\n", (uint32_t) (time_us_64() / 1000));
+    printf("uptime: %u ms\n", (uint32_t)(time_us_64() / 1000));
 }
 
 void cmd_led_enable(const command_t *)
@@ -185,13 +169,7 @@ void cmd_button(const command_t *)
 
 void cmd_pi_start(const command_t *command)
 {
-    uint32_t terms = DEFAULT_PI_TERMS;
-
-    if (running_pi)
-    {
-        printf("error: pi is busy\n");
-        return;
-    }
+    uint32_t terms = pi_task_get_terms();
 
     if (command->argc >= 1)
     {
@@ -201,58 +179,37 @@ void cmd_pi_start(const command_t *command)
             return;
         }
     }
-    if (terms == 0)
+
+    if (!pi_task_set_terms(terms))
     {
         printf("error: terms must be greater than 0\n");
         return;
     }
 
-    terms_pi = terms;
-    current_sum = 0.0;
-    current_sign = 1.0;
-    current_k = 0;
-    result_pi = -1.0;
-    start_pi = time_us_64();
-    end_pi = 0;
-    running_pi = true;
+    if (!pi_task_start())
+    {
+        printf("error: pi is busy\n");
+        return;
+    }
 
-    printf("pi: started, %" PRIu32 " terms\n", terms);
+    printf("pi: started, %u terms\n", pi_task_get_terms());
 }
 
 void cmd_pi(const command_t *)
 {
-    if (running_pi)
+    switch (pi_task_get_state())
     {
-        printf("pi: running\n");
-        return;
-    }
-
-    if (result_pi < 0)
-    {
+    case NOT_START:
         printf("pi: not started\n");
-        return;
-    }
-
-    printf("pi: %.9f in %u ms\n", result_pi, (uint32_t) ((end_pi - start_pi) / 1000));
-}
-
-static void calc_pi(void)
-{
-    uint32_t processed = 0;
-
-    while (current_k < terms_pi && processed < PI_CHUNK_TERMS)
-    {
-        current_sum += current_sign / (2.0 * (double)current_k + 1.0);
-        current_sign = -current_sign;
-        current_k++;
-        processed++;
-    }
-
-    if (current_k >= terms_pi)
-    {
-        result_pi = 4.0 * current_sum;
-        end_pi = time_us_64();
-        running_pi = false;
+        break;
+    case CALUTATE:
+        printf("pi: running\n");
+        break;
+    case FINISH:
+        printf("pi: %.9f in %u ms\n", pi_task_get_result(), pi_task_get_time_calculate());
+        break;
+    default:
+        break;
     }
 }
 

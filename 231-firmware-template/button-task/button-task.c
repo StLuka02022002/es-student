@@ -3,21 +3,8 @@
 #include "led-task.h"
 #include <stdint.h>
 
-#define BUTTON_PIN 15
-#define DEBOUNCE_MS 20
-#define DEBOUNCE_US 20*1000
-
 static uint64_t last_press_us;
 static uint32_t button_count;
-
-typedef enum
-{
-    RELEASE,
-    IS_PRESSING,
-    PRESSES,
-    IS_RELEASING
-} button_state_t;
-
 static button_state_t button_state;
 
 void button_task_init(void)

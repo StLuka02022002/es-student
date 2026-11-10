@@ -5,7 +5,7 @@
 
 #define BUTTON_PIN 15
 #define DEBOUNCE_MS 20
-#define DEBOUNCE_US (DEBOUNCE_MS * 1000)
+#define DEBOUNCE_US 20*1000
 
 static uint64_t last_press_us;
 static uint32_t button_count;

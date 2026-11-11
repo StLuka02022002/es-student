@@ -14,7 +14,7 @@ void button_task_init(void)
     gpio_pull_up(BUTTON_PIN);
     last_press_us = time_us_64();
     button_count = 0;
-    button_state = !gpio_get(BUTTON_PIN);
+    button_state = RELEASE;
 }
 
 void button_task_handle(void)
@@ -67,11 +67,7 @@ void button_task_handle(void)
 
 bool button_task_is_pressed(void)
 {
-    if (button_state == PRESSES || button_state == IS_RELEASING)
-    {
-        return true;
-    }
-    return false;
+    return (button_state == PRESSES || button_state == IS_RELEASING);
 }
 
 uint32_t button_task_get_press_count(void)

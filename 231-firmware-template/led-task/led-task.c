@@ -63,6 +63,7 @@ bool led_task_set_period_ms(uint32_t period_ms)
     if (period_ms > 0)
     {
         half_period_us = ((uint64_t)period_ms * 1000) / 2;
+        last_toggle_us = time_us_64();
         return true;
     }
     return false;
@@ -82,10 +83,8 @@ static bool period_elapsed(uint64_t *last_us, uint64_t period_us)
         return false;
     }
 
-    // Следующее срабатывание отсчитывается от прошлого, а не от «сейчас»
     *last_us += period_us;
 
-    // Отстали больше чем на период: не догонять, а начать отсчёт заново
     if (now_us - *last_us >= period_us)
     {
         *last_us = now_us;

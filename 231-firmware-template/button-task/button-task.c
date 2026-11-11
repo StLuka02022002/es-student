@@ -3,6 +3,14 @@
 #include "led-task.h"
 #include <stdint.h>
 
+typedef enum
+{
+    RELEASE,
+    IS_PRESSING,
+    PRESSES,
+    IS_RELEASING
+} button_state_t;
+
 static uint64_t last_press_us;
 static uint32_t button_count;
 static button_state_t button_state;

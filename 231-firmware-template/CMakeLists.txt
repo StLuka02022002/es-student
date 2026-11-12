@@ -20,6 +20,9 @@ add_executable(${PROJECT_NAME}
 	${CMAKE_CURRENT_SOURCE_DIR}/pi-task/pi-task.c
 )
 target_link_libraries(${PROJECT_NAME} pico_stdlib device logging systime stdio_text_protocol profiling)
+
+target_compile_definitions(profiling PUBLIC PROFILING_ENABLED=1)
+
 target_include_directories(${PROJECT_NAME}
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/led
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/api
@@ -28,8 +31,6 @@ target_include_directories(${PROJECT_NAME}
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/pi-task
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 )
-
-target_compile_definitions(profiling PUBLIC PTOFILING_ENABLED=1)
 
 pico_enable_stdio_usb(${PROJECT_NAME} 1)
 pico_enable_stdio_uart(${PROJECT_NAME} 0)

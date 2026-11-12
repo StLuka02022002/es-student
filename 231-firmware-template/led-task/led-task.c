@@ -13,7 +13,7 @@ void led_task_init(void)
 {
     led_init();
     half_period_us = 1000 * 1000 / 2;
-    last_toggle_us = time_us_64();
+    last_toggle_us = systime_us();
     led_state = LED_STATE_BLINK;
 }
 
@@ -47,7 +47,7 @@ void led_task_set_state(led_state_t state)
         break;
     case LED_STATE_BLINK:
         led_set(!led_is_on());
-        last_toggle_us = time_us_64();
+        last_toggle_us = systime_us();
         break;
     default:
         break;
@@ -64,7 +64,7 @@ bool led_task_set_period_ms(uint32_t period_ms)
     if (period_ms > 0)
     {
         half_period_us = ((uint64_t)period_ms * 1000) / 2;
-        last_toggle_us = time_us_64();
+        last_toggle_us = systime_us();
         return true;
     }
     return false;

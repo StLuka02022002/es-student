@@ -1,6 +1,7 @@
 #include "pi-task.h"
-#include "pico/stdlib.h"
 #include "stdint.h"
+#include "pico/stdlib.h"
+#include "systime/systime.h"
 
 pi_task_state_t pi_task_state;
 
@@ -54,7 +55,7 @@ void pi_task_handle(void)
         if (current_k >= terms_pi)
         {
             result_pi = 4.0 * current_sum;
-            end_pi = time_us_64();
+            end_pi = systime_us();
             pi_task_state = FINISH;
         }
     }
@@ -72,7 +73,7 @@ bool pi_task_start(void)
     current_sum = 0.0;
     current_sign = 1.0;
     current_k = 0;
-    start_pi = time_us_64();
+    start_pi = systime_us();
     end_pi = 0;
     return true;
 }

@@ -3,6 +3,8 @@
 #include "led-task.h"
 #include <stdint.h>
 
+#include "systime/systime.h"
+
 typedef enum
 {
     RELEASE,
@@ -20,7 +22,7 @@ void button_task_init(void)
     gpio_init(BUTTON_PIN);
     gpio_set_dir(BUTTON_PIN, GPIO_IN);
     gpio_pull_up(BUTTON_PIN);
-    last_press_us = time_us_64();
+    last_press_us = systime_us();
     button_count = 0;
     button_state = RELEASE;
 }
@@ -28,7 +30,7 @@ void button_task_init(void)
 void button_task_handle(void)
 {
     bool raw = !gpio_get(BUTTON_PIN);
-    uint64_t now = time_us_64();
+    uint64_t now = systime_us();
 
     switch (button_state)
     {

@@ -1,4 +1,4 @@
-add_library(stdio_text_protocol STATIC src/stdio_text_protocol.c)
+add_library(stdio_text_protocol STATIC src/stdio-text-protocol.c)
 
 target_include_directories(stdio_text_protocol PUBLIC include)
 

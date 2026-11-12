@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "stdio_text_protocol/stdio_text_protocol.h"
+#include "stdio-text-protocol/stdio-text-protocol.h"
 
 typedef void (*api_callback_t)(const command_t *command);
 

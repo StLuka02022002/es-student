@@ -3,7 +3,7 @@
 
 #include "logging/log.h"
 #include "profiling/profiling.h"
-#include "stdio_text_protocol/stdio_text_protocol.h"
+#include "stdio-text-protocol/stdio-text-protocol.h"
 
 #include "led-task.h"
 #include "button-task.h"

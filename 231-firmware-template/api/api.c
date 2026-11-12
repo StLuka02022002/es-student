@@ -49,16 +49,6 @@ const api_command_t commands[] = {
 
 const size_t api_command_count = sizeof(commands) / sizeof(commands[0]);
 
-void api_init(void)
-{
-    profiling_init();
-}
-
-void api_update(void)
-{
-    profiling_iteration();
-}
-
 void api_handle(const command_t *command)
 {
     if (command == NULL || command->name == NULL)
@@ -83,7 +73,7 @@ void api_handle(const command_t *command)
     printf("error: unknown command '%s', try help\n", command->name);
 }
 
-static void cmd_help(const command_t *)
+static void cmd_help(const command_t *command)
 {
     for (size_t i = 0; i < api_command_count; i++)
     {
@@ -91,9 +81,19 @@ static void cmd_help(const command_t *)
     }
 }
 
-void cmd_info(const command_t *)
+void cmd_info(const command_t *command)
 {
-    device_info();
+    device_info_t info = {0};
+    device_get_info(&info);
+    printf("name: %s\n", info.name);
+    printf("version: %s\n", info.version);
+    printf("project: %s\n", info.project);
+    printf("repo: %s\n", info.repo);
+    printf("board: %s\n", info.board);
+    printf("serial: %s\n", &info.board_id[0]);
+    printf("chip: manufacturer 0x%03x, part 0x%04x, revision %u\n",
+           info.manufacturer, info.part, info.revision);
+    printf("pico-sdk: %s\n", info.pico_sdk);
 }
 
 void cmd_uptime(const command_t *)
@@ -215,13 +215,25 @@ void cmd_pi(const command_t *)
 
 void cmd_profiling(const command_t *)
 {
-    printf("iteration avg %.2f us, max %" PRIu32 " us\n",
-           profiling_avg_us(), profiling_max_us());
+    printf("profiling\n");
+    for (size_t i = 0; i < COUNT_PROFILING_STOPWATCH; i++)
+    {
+        profiling_result_t result = {0};
+        if (profiling_get(i, &result))
+        {
+            double mean = result.count
+                        ? (double)result.avg_sum_us / (double)result.count
+                        : 0.0;
+
+            printf("%-10s count %u   mean %.2f us   max %u us\n",
+                   result.name, result.count, mean, result.max_us);
+        }
+    }
 }
 
 void cmd_profiling_reset(const command_t *)
 {
-    profiling_reset_max();
+    profiling_reset();
     printf("profiling reset\n");
 }
 

@@ -6,7 +6,6 @@
 #define LOG_LEVEL_INF 2
 #define LOG_LEVEL_DBG 3
 
-void log_version(void);
 void log_prefix(const char *level, const char *function, int line);
 
 #define LOG_ERR(...)                               \

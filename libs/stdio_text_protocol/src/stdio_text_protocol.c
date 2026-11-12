@@ -1,4 +1,4 @@
-#include "stdio-text-protocol.h"
+#include "stdio_text_protocol/stdio_text_protocol.h"
 #include "pico/stdlib.h"
 #include <string.h>
 #include <stdio.h>

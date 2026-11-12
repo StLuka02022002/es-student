@@ -1,4 +1,4 @@
-#include "profiling.h"
+#include "profiling/profiling.h"
 #include "pico/stdlib.h"
 #include "hardware/clocks.h"
 
@@ -63,6 +63,7 @@ void profiling_stopwatch_init(uint32_t id, const char *name)
     }
 }
 
+#if PROFILING_ENABLED
 void profiling_start(uint32_t id)
 {
     if (id < COUNT_PROFILING_STOPWATCH && profiling_bisy[id])
@@ -70,6 +71,7 @@ void profiling_start(uint32_t id)
         previus_us_all[id] = time_us_32();
     }
 }
+
 void profiling_stop(uint32_t id)
 {
     if (id < COUNT_PROFILING_STOPWATCH && profiling_bisy[id])
@@ -84,6 +86,7 @@ void profiling_stop(uint32_t id)
         profiling_result[id].avg_sum_us += iteration_us;
     }
 }
+#endif
 
 bool profiling_get(uint32_t id, profiling_result_t *result)
 {

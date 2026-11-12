@@ -1,14 +1,17 @@
 #include "api.h"
-#include "pico/stdlib.h"
+
 #include <string.h>
 #include <stdio.h>
-#include <inttypes.h>
 #include <ctype.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "profiling.h"
-#include "device.h"
+
+#include "firmware.h"
+
+#include "profiling/profiling.h"
+#include "device/device.h"
+#include "systime/systime.h"
 
 #include "led-task.h"
 #include "button-task.h"
@@ -85,10 +88,10 @@ void cmd_info(const command_t *command)
 {
     device_info_t info = {0};
     device_get_info(&info);
-    printf("name: %s\n", info.name);
-    printf("version: %s\n", info.version);
-    printf("project: %s\n", info.project);
-    printf("repo: %s\n", info.repo);
+    printf("name: %s\n", FIRMWARE_NAME);
+    printf("version: %s\n", FIRMWARE_VERSION);
+    printf("project: %s\n", FIRMWARE_PROJECT);
+    printf("repo: %s\n", FIRMWARE_REPO);
     printf("board: %s\n", info.board);
     printf("serial: %s\n", &info.board_id[0]);
     printf("chip: manufacturer 0x%03x, part 0x%04x, revision %u\n",
@@ -98,7 +101,7 @@ void cmd_info(const command_t *command)
 
 void cmd_uptime(const command_t *)
 {
-    printf("uptime: %u ms\n", (uint32_t)(time_us_64() / 1000));
+    printf("uptime: %u ms\n", systime_ms());
 }
 
 void cmd_led_enable(const command_t *)
@@ -215,6 +218,11 @@ void cmd_pi(const command_t *)
 
 void cmd_profiling(const command_t *)
 {
+    if (!PROFILING_ENABLED)
+    {
+        printf("profiling is disabled in this build");
+        return;
+    }
     printf("profiling\n");
     for (size_t i = 0; i < COUNT_PROFILING_STOPWATCH; i++)
     {
@@ -222,8 +230,8 @@ void cmd_profiling(const command_t *)
         if (profiling_get(i, &result))
         {
             double mean = result.count
-                        ? (double)result.avg_sum_us / (double)result.count
-                        : 0.0;
+                              ? (double)result.avg_sum_us / (double)result.count
+                              : 0.0;
 
             printf("%-10s count %u   mean %.2f us   max %u us\n",
                    result.name, result.count, mean, result.max_us);
@@ -233,6 +241,11 @@ void cmd_profiling(const command_t *)
 
 void cmd_profiling_reset(const command_t *)
 {
+    if (!PROFILING_ENABLED)
+    {
+        printf("profiling is disabled in this build");
+        return;
+    }
     profiling_reset();
     printf("profiling reset\n");
 }

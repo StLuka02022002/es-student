@@ -1,4 +1,4 @@
-#include "device.h"
+#include "device/device.h"
 
 #include <stdio.h>
 #include <stddef.h>
@@ -14,10 +14,6 @@ void device_get_info(device_info_t *info)
         return;
     }
 
-    info->name = DEVICE_NAME;
-    info->version = FIRMWARE_VERSION;
-    info->project = DEVICE_PROJECT;
-    info->repo = DEVICE_REPO;
     info->board = DEVICE_BOARD;
     pico_get_unique_board_id_string(info->board_id, sizeof(info->board_id));
     volatile uint32_t *chip_id = (volatile uint32_t *)(SYSINFO_BASE + SYSINFO_CHIP_ID_OFFSET);

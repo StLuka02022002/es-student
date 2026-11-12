@@ -1,0 +1,5 @@
+add_subdirectory(device)
+add_subdirectory(logging)
+add_subdirectory(stdio_text_protocol)
+add_subdirectory(profiling)
+add_subdirectory(systime)

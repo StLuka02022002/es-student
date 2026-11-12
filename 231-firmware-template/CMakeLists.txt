@@ -9,32 +9,27 @@ pico_sdk_init()
 
 add_compile_options(-Wall)
 
+add_subdirectory(../libs ${CMAKE_BINARY_DIR}/libs)
+
 add_executable(${PROJECT_NAME}
 	${CMAKE_CURRENT_SOURCE_DIR}/main.c
 	${CMAKE_CURRENT_SOURCE_DIR}/led/led.c
-	${CMAKE_CURRENT_SOURCE_DIR}/logging/log.c
-	${CMAKE_CURRENT_SOURCE_DIR}/device/device.c
-	${CMAKE_CURRENT_SOURCE_DIR}/profiling/profiling.c
-	${CMAKE_CURRENT_SOURCE_DIR}/stdio-text-protocol/stdio-text-protocol.c
 	${CMAKE_CURRENT_SOURCE_DIR}/api/api.c
 	${CMAKE_CURRENT_SOURCE_DIR}/led-task/led-task.c
 	${CMAKE_CURRENT_SOURCE_DIR}/button-task/button-task.c
 	${CMAKE_CURRENT_SOURCE_DIR}/pi-task/pi-task.c
 )
-target_link_libraries(${PROJECT_NAME} pico_stdlib pico_unique_id)
-target_compile_definitions(${PROJECT_NAME} PRIVATE DEVICE_BOARD="${PICO_BOARD}")
+target_link_libraries(${PROJECT_NAME} pico_stdlib device logging systime stdio_text_protocol profiling)
 target_include_directories(${PROJECT_NAME}
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/led
-	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/logging
-	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/device
-	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/profiling
-	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/stdio-text-protocol
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/api
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/led-task
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/button-task
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/pi-task
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 )
+
+target_compile_definitions(profiling PUBLIC PTOFILING_ENABLED=1)
 
 pico_enable_stdio_usb(${PROJECT_NAME} 1)
 pico_enable_stdio_uart(${PROJECT_NAME} 0)

@@ -29,6 +29,4 @@ typedef struct device_info_t
     const char *pico_sdk;
 } device_info_t;
 
-void device_info(void);
-
 void device_get_info(device_info_t *info);

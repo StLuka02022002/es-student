@@ -2,6 +2,7 @@
 #include "pico/stdlib.h"
 #include "led-task.h"
 #include <stdint.h>
+#include "platform.h"
 
 #include "systime/systime.h"
 
@@ -19,9 +20,6 @@ static button_state_t button_state;
 
 void button_task_init(void)
 {
-    gpio_init(BUTTON_PIN);
-    gpio_set_dir(BUTTON_PIN, GPIO_IN);
-    gpio_pull_up(BUTTON_PIN);
     last_press_us = systime_us();
     button_count = 0;
     button_state = RELEASE;
@@ -29,7 +27,7 @@ void button_task_init(void)
 
 void button_task_handle(void)
 {
-    bool raw = !gpio_get(BUTTON_PIN);
+    bool raw = platform_button_read();
     uint64_t now = systime_us();
 
     switch (button_state)

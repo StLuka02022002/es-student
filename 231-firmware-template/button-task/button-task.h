@@ -1,7 +1,6 @@
 #pragma once
 #include <stdint.h>
 
-#define BUTTON_PIN 15
 #define DEBOUNCE_MS 20
 #define DEBOUNCE_US 20*1000
 

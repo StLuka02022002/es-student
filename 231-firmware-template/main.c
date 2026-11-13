@@ -1,13 +1,14 @@
-#include "api.h"
+#include "api/api.h"
+
 #include "firmware.h"
+#include "platform/platform.h"
+#include "pi-task/pi-task.h"
+#include "led-task/led-task.h"
+#include "button-task/button-task.h"
 
 #include "logging/log.h"
 #include "profiling/profiling.h"
 #include "stdio-text-protocol/stdio-text-protocol.h"
-
-#include "led-task.h"
-#include "button-task.h"
-#include "pi-task.h"
 
 
 typedef enum stopwatch
@@ -21,6 +22,7 @@ typedef enum stopwatch
 
 int main()
 {
+	platform_init();
 	stdio_text_protocol_init();
 	led_task_init();
 	button_task_init();

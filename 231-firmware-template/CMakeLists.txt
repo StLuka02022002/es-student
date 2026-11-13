@@ -10,25 +10,16 @@ pico_sdk_init()
 add_compile_options(-Wall)
 
 add_subdirectory(../libs ${CMAKE_BINARY_DIR}/libs)
+add_subdirectory(logic ${CMAKE_BINARY_DIR}/logic)
 
 add_executable(${PROJECT_NAME}
 	${CMAKE_CURRENT_SOURCE_DIR}/main.c
-	${CMAKE_CURRENT_SOURCE_DIR}/led/led.c
-	${CMAKE_CURRENT_SOURCE_DIR}/api/api.c
-	${CMAKE_CURRENT_SOURCE_DIR}/led-task/led-task.c
-	${CMAKE_CURRENT_SOURCE_DIR}/button-task/button-task.c
-	${CMAKE_CURRENT_SOURCE_DIR}/pi-task/pi-task.c
 )
-target_link_libraries(${PROJECT_NAME} pico_stdlib device logging systime stdio_text_protocol profiling)
+target_link_libraries(${PROJECT_NAME} pico_stdlib device logging systime stdio_text_protocol profiling logic platform)
 
 target_compile_definitions(profiling PUBLIC PROFILING_ENABLED=1)
 
 target_include_directories(${PROJECT_NAME}
-	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/led
-	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/api
-	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/led-task
-	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/button-task
-	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/pi-task
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 )
 

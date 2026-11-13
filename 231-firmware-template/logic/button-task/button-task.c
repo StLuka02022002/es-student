@@ -1,9 +1,9 @@
 #include "button-task.h"
-#include "pico/stdlib.h"
-#include "led-task.h"
-#include <stdint.h>
-#include "platform.h"
 
+#include <stdint.h>
+
+#include "led-task/led-task.h"
+#include "platform/platform.h"
 #include "systime/systime.h"
 
 typedef enum

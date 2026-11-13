@@ -1,42 +1,37 @@
-#include "api.h"
+#include "api-commands.h"
 
-#include <string.h>
 #include <stdio.h>
-#include <ctype.h>
+#include <string.h>
 #include <errno.h>
-#include <stdlib.h>
+#include <ctype.h>
 #include <stdint.h>
+#include <stdlib.h>
 
-#include "firmware.h"
-
-#include "profiling/profiling.h"
 #include "device/device.h"
 #include "systime/systime.h"
+#include "profiling/profiling.h"
 
-#include "led-task.h"
-#include "button-task.h"
-#include "pi-task.h"
+#include "firmware.h"
+#include "led-task/led-task.h"
+#include "pi-task/pi-task.h"
+#include "button-task/button-task.h"
 
-static void cmd_help(const command_t *);
+static void cmd_info(const command_t *);
+static void cmd_uptime(const command_t *);
+static void cmd_led_enable(const command_t *);
+static void cmd_led_disable(const command_t *);
+static void cmd_led_blink(const command_t *);
+static void cmd_led_period(const command_t *);
+static void cmd_button(const command_t *);
+static void cmd_pi_start(const command_t *);
+static void cmd_pi(const command_t *);
+static void cmd_profiling(const command_t *);
+static void cmd_profiling_reset(const command_t *);
+
 static void print_led_state(void);
-static void blink(void);
-static void calc_pi(void);
 static bool parse_u32(const char *text, uint32_t *value);
 
-void cmd_info(const command_t *);
-void cmd_uptime(const command_t *);
-void cmd_led_enable(const command_t *);
-void cmd_led_disable(const command_t *);
-void cmd_led_blink(const command_t *);
-void cmd_led_period(const command_t *);
-void cmd_button(const command_t *);
-void cmd_pi_start(const command_t *);
-void cmd_pi(const command_t *);
-void cmd_profiling(const command_t *);
-void cmd_profiling_reset(const command_t *);
-
-const api_command_t commands[] = {
-    {"help", "перечень команд со справкой", cmd_help},
+const api_command_t api_commands[] = {
     {"info", "паспорт прибора", cmd_info},
     {"uptime", "время с момента сброса", cmd_uptime},
     {"led_enable", "перевести светодиод в состояние «горит»", cmd_led_enable},
@@ -50,41 +45,9 @@ const api_command_t commands[] = {
     {"profiling_reset", "сбросить результаты секундомеров", cmd_profiling_reset},
 };
 
-const size_t api_command_count = sizeof(commands) / sizeof(commands[0]);
+const uint32_t api_command_count = sizeof(api_commands) / sizeof(api_commands[0]);
 
-void api_handle(const command_t *command)
-{
-    if (command == NULL || command->name == NULL)
-    {
-        return;
-    }
-
-    if (command->truncated)
-    {
-        printf("error: command longer than 63 characters or 4 arguments\n");
-        return;
-    }
-
-    for (size_t i = 0; i < api_command_count; i++)
-    {
-        if (strcmp(command->name, commands[i].name) == 0)
-        {
-            commands[i].callback(command);
-            return;
-        }
-    }
-    printf("error: unknown command '%s', try help\n", command->name);
-}
-
-static void cmd_help(const command_t *command)
-{
-    for (size_t i = 0; i < api_command_count; i++)
-    {
-        printf("%-16s %s\n", commands[i].name, commands[i].help);
-    }
-}
-
-void cmd_info(const command_t *command)
+static void cmd_info(const command_t *command)
 {
     device_info_t info = {0};
     device_get_info(&info);
@@ -99,30 +62,30 @@ void cmd_info(const command_t *command)
     printf("pico-sdk: %s\n", info.pico_sdk);
 }
 
-void cmd_uptime(const command_t *)
+static void cmd_uptime(const command_t *)
 {
     printf("uptime: %u ms\n", systime_ms());
 }
 
-void cmd_led_enable(const command_t *)
+static void cmd_led_enable(const command_t *)
 {
     led_task_set_state(LED_STATE_ON);
     print_led_state();
 }
 
-void cmd_led_disable(const command_t *)
+static void cmd_led_disable(const command_t *)
 {
     led_task_set_state(LED_STATE_OFF);
     print_led_state();
 }
 
-void cmd_led_blink(const command_t *)
+static void cmd_led_blink(const command_t *)
 {
     led_task_set_state(LED_STATE_BLINK);
     print_led_state();
 }
 
-void cmd_led_period(const command_t *command)
+static void cmd_led_period(const command_t *command)
 {
     uint32_t period_ms;
 
@@ -164,13 +127,13 @@ static void print_led_state(void)
     printf(", period %u ms\n", led_task_get_period_ms());
 }
 
-void cmd_button(const command_t *)
+static void cmd_button(const command_t *)
 {
     printf("button: %s, presses %u\n",
            button_task_is_pressed() ? "pressed" : "released", button_task_get_press_count());
 }
 
-void cmd_pi_start(const command_t *command)
+static void cmd_pi_start(const command_t *command)
 {
     uint32_t terms = pi_task_get_terms();
 
@@ -198,7 +161,7 @@ void cmd_pi_start(const command_t *command)
     printf("pi: started, %u terms\n", pi_task_get_terms());
 }
 
-void cmd_pi(const command_t *)
+static void cmd_pi(const command_t *)
 {
     switch (pi_task_get_state())
     {
@@ -216,7 +179,7 @@ void cmd_pi(const command_t *)
     }
 }
 
-void cmd_profiling(const command_t *)
+static void cmd_profiling(const command_t *)
 {
     if (!PROFILING_ENABLED)
     {
@@ -239,7 +202,7 @@ void cmd_profiling(const command_t *)
     }
 }
 
-void cmd_profiling_reset(const command_t *)
+static void cmd_profiling_reset(const command_t *)
 {
     if (!PROFILING_ENABLED)
     {

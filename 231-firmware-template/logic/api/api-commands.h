@@ -12,9 +12,5 @@ typedef struct
     api_callback_t callback;
 } api_command_t;
 
-void api_init();
-
-void api_handle(const command_t *command);
-
-void api_update(void);
-
+extern const api_command_t api_commands[];
+extern const uint32_t api_command_count;

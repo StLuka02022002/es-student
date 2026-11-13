@@ -1,7 +1,7 @@
 #include "pi-task.h"
 #include "stdint.h"
-#include "pico/stdlib.h"
 #include "systime/systime.h"
+#include <stddef.h>
 
 pi_task_state_t pi_task_state;
 

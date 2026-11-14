@@ -63,7 +63,7 @@ static void cmd_info(const command_t *command)
 
 static void cmd_uptime(const command_t *)
 {
-    printf("uptime: %u ms\n", systime_ms());
+    printf("uptime: %llu ms\n", systime_ms());
 }
 
 static void cmd_led_enable(const command_t *)

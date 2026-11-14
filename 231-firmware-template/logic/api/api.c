@@ -11,7 +11,7 @@ static api_command_t help_command = {"help", "list of commands", cmd_help};
 
 void api_handle(const command_t *command)
 {
-    if (command == NULL || command->name == NULL)
+    if (command == NULL)
     {
         return;
     }
@@ -19,6 +19,11 @@ void api_handle(const command_t *command)
     if (command->truncated)
     {
         printf("error: command longer than 63 characters or 4 arguments\n");
+        return;
+    }
+
+    if (command->name == NULL)
+    {
         return;
     }
 

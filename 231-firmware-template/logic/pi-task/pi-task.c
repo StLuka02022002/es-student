@@ -1,6 +1,7 @@
 #include "pi-task.h"
 #include "stdint.h"
 #include "systime/systime.h"
+#include <stdio.h>
 #include <stddef.h>
 
 pi_task_state_t pi_task_state;
@@ -26,11 +27,8 @@ void pi_task_init(void)
 
 bool pi_task_set_terms(uint32_t terms)
 {
-    if (terms == NULL)
-    {
-        terms_pi = DEFAULT_PI_TERMS;
-        return true;
-    }
+    terms_pi = DEFAULT_PI_TERMS;
+
     if (terms > 0)
     {
         terms_pi = terms;
@@ -90,14 +88,17 @@ uint32_t pi_task_get_terms(void)
 
 double pi_task_get_result(void)
 {
-    if(pi_task_state == NOT_START){
+    if (pi_task_state == NOT_START)
+    {
         return -1.0;
     }
     return result_pi;
 }
 
-uint32_t pi_task_get_time_calculate(void){
-    if(pi_task_state == FINISH){
+uint32_t pi_task_get_time_calculate(void)
+{
+    if (pi_task_state == FINISH)
+    {
         return (uint32_t)((end_pi - start_pi) / 1000);
     }
     return 0;

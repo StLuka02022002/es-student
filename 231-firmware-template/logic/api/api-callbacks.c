@@ -145,8 +145,6 @@ static void cmd_pi_start(const command_t *command)
         return;
     }
 
-    printf("%u ",terms);
-
     if (!pi_task_set_terms(terms))
     {
         printf("error: terms must be greater than 0\n");

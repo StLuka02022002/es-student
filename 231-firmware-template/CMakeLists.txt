@@ -11,6 +11,7 @@ add_compile_options(-Wall)
 
 add_subdirectory(../libs ${CMAKE_BINARY_DIR}/libs)
 add_subdirectory(logic ${CMAKE_BINARY_DIR}/logic)
+add_subdirectory(platform ${CMAKE_BINARY_DIR}/platform)
 
 add_executable(${PROJECT_NAME}
 	${CMAKE_CURRENT_SOURCE_DIR}/main.c

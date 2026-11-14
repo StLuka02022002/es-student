@@ -106,6 +106,7 @@ void profiling_reset(void)
         {
             profiling_result[i].avg_sum_us = 0;
             profiling_result[i].max_us = 0;
+            profiling_result[i].count = 0;
         }
     }
 }

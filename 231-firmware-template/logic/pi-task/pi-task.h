@@ -1,7 +1,7 @@
 #pragma once
 #include "stdint.h"
 
-#define DEFAULT_PI_TERMS 1000
+#define DEFAULT_PI_TERMS 1000000
 
 typedef enum {
     NOT_START,

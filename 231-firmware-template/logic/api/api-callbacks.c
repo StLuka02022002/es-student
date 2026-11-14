@@ -57,7 +57,7 @@ static void cmd_info(const command_t *command)
     printf("board: %s\n", info.board);
     printf("serial: %s\n", &info.board_id[0]);
     printf("chip: manufacturer 0x%03x, part 0x%04x, revision %u\n",
-           info.manufacturer, info.part, info.revision);
+           (unsigned)info.manufacturer, (unsigned)info.part, (unsigned)info.revision);
     printf("pico-sdk: %s\n", info.pico_sdk);
 }
 
@@ -123,13 +123,13 @@ static void print_led_state(void)
         break;
     }
     }
-    printf(", period %u ms\n", led_task_get_period_ms());
+    printf(", period %u ms\n", (unsigned)led_task_get_period_ms());
 }
 
 static void cmd_button(const command_t *)
 {
     printf("button: %s, presses %u\n",
-           button_task_is_pressed() ? "pressed" : "released", button_task_get_press_count());
+           button_task_is_pressed() ? "pressed" : "released", (unsigned)button_task_get_press_count());
 }
 
 static void cmd_pi_start(const command_t *command)
@@ -157,7 +157,7 @@ static void cmd_pi_start(const command_t *command)
         return;
     }
 
-    printf("pi: started, %u terms\n", pi_task_get_terms());
+    printf("pi: started, %lu terms\n", pi_task_get_terms());
 }
 
 static void cmd_pi(const command_t *)
@@ -171,7 +171,7 @@ static void cmd_pi(const command_t *)
         printf("pi: running\n");
         break;
     case FINISH:
-        printf("pi: %.9f in %u ms\n", pi_task_get_result(), pi_task_get_time_calculate());
+        printf("pi: %.9f in %lu ms\n", pi_task_get_result(), pi_task_get_time_calculate());
         break;
     default:
         break;
@@ -195,7 +195,7 @@ static void cmd_profiling(const command_t *)
                               ? (double)result.avg_sum_us / (double)result.count
                               : 0.0;
 
-            printf("%-10s count %u   mean %.2f us   max %u us\n",
+            printf("%-10s count %lu   mean %.2f us   max %lu us\n",
                    result.name, result.count, mean, result.max_us);
         }
     }

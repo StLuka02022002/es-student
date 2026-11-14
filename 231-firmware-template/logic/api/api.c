@@ -7,7 +7,7 @@
 
 static void cmd_help(const command_t *);
 
-static api_command_t help_command = {"help", "перечень команд со справкой", cmd_help};
+static api_command_t help_command = {"help", "list of commands", cmd_help};
 
 void api_handle(const command_t *command)
 {

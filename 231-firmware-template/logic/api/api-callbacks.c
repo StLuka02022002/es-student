@@ -30,19 +30,18 @@ static void cmd_profiling_reset(const command_t *);
 
 static void print_led_state(void);
 static bool parse_u32(const char *text, uint32_t *value);
-
 const api_command_t api_commands[] = {
-    {"info", "паспорт прибора", cmd_info},
-    {"uptime", "время с момента сброса", cmd_uptime},
-    {"led_enable", "перевести светодиод в состояние «горит»", cmd_led_enable},
-    {"led_disable", "перевести светодиод в состояние «выключен»", cmd_led_disable},
-    {"led_blink", "перевести светодиод в состояние «мигает»", cmd_led_blink},
-    {"led_period", "задать период мигания", cmd_led_period},
-    {"button", "состояние кнопки и число нажатий", cmd_button},
-    {"pi_start", "запустить расчёт π", cmd_pi_start},
-    {"pi", "результат или состояние расчёта π", cmd_pi},
-    {"profiling", "результаты секундомеров", cmd_profiling},
-    {"profiling_reset", "сбросить результаты секундомеров", cmd_profiling_reset},
+    {"info", "device pasport", cmd_info},
+    {"uptime", "time since reset", cmd_uptime},
+    {"led_enable", "set LED to ON state", cmd_led_enable},
+    {"led_disable", "set LED to OFF state", cmd_led_disable},
+    {"led_blink", "set LED to BLINK state", cmd_led_blink},
+    {"led_period", "set blink period", cmd_led_period},
+    {"button", "button state and press count", cmd_button},
+    {"pi_start", "start pi calculation", cmd_pi_start},
+    {"pi", "pi calculation result or state", cmd_pi},
+    {"profiling", "stopwatch results", cmd_profiling},
+    {"profiling_reset", "reset stopwatch results", cmd_profiling_reset},
 };
 
 const uint32_t api_command_count = sizeof(api_commands) / sizeof(api_commands[0]);

@@ -27,7 +27,11 @@ void pi_task_init(void)
 
 bool pi_task_set_terms(uint32_t terms)
 {
-    terms_pi = DEFAULT_PI_TERMS;
+
+    if (pi_task_state == CALCUTATE)
+    {
+        return true;
+    }
 
     if (terms > 0)
     {
@@ -39,7 +43,7 @@ bool pi_task_set_terms(uint32_t terms)
 
 void pi_task_handle(void)
 {
-    if (pi_task_state == CALUTATE)
+    if (pi_task_state == CALCUTATE)
     {
         uint32_t processed = 0;
         while (current_k < terms_pi && processed < PI_TERMS_PER_CALL)
@@ -61,12 +65,12 @@ void pi_task_handle(void)
 
 bool pi_task_start(void)
 {
-    if (pi_task_state == CALUTATE)
+    if (pi_task_state == CALCUTATE)
     {
         return false;
     }
 
-    pi_task_state = CALUTATE;
+    pi_task_state = CALCUTATE;
     result_pi = 0;
     current_sum = 0.0;
     current_sign = 1.0;

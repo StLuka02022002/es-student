@@ -134,16 +134,18 @@ static void cmd_button(const command_t *)
 
 static void cmd_pi_start(const command_t *command)
 {
-    uint32_t terms = pi_task_get_terms();
+    uint32_t terms = 0;
 
-    if (command->argc >= 1)
+    if (command->argc == 0)
     {
-        if (command->argc > 1 || !parse_u32(command->argv[0], &terms))
-        {
-            printf("error: usage pi_start [<terms>]\n");
-            return;
-        }
+        terms = pi_task_get_terms();
+    } else if (command->argc > 1 || !parse_u32(command->argv[0], &terms))
+    {
+        printf("error: usage pi_start [<terms>]\n");
+        return;
     }
+
+    printf("%u ",terms);
 
     if (!pi_task_set_terms(terms))
     {
@@ -167,7 +169,7 @@ static void cmd_pi(const command_t *)
     case NOT_START:
         printf("pi: not started\n");
         break;
-    case CALUTATE:
+    case CALCUTATE:
         printf("pi: running\n");
         break;
     case FINISH:

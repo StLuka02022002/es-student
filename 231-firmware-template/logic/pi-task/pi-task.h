@@ -5,7 +5,7 @@
 
 typedef enum {
     NOT_START,
-    CALUTATE,
+    CALCUTATE,
     FINISH,
 } pi_task_state_t;
 

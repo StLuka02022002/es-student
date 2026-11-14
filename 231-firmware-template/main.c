@@ -25,7 +25,7 @@ int main()
 	platform_init();
 	stdio_text_protocol_init();
 	led_task_init();
-	button_task_init();
+	button_task_init(led_task_next_state);
 	pi_task_init();
 
 	profiling_init();

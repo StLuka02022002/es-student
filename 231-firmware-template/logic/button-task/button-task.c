@@ -2,7 +2,6 @@
 
 #include <stdint.h>
 
-#include "led-task/led-task.h"
 #include "platform/platform.h"
 #include "systime/systime.h"
 
@@ -17,12 +16,14 @@ typedef enum
 static uint64_t last_press_us;
 static uint32_t button_count;
 static button_state_t button_state;
+static button_task_callback_t button_task_callback;
 
-void button_task_init(void)
+void button_task_init(button_task_callback_t on_press)
 {
     last_press_us = systime_us();
     button_count = 0;
     button_state = RELEASE;
+    button_task_callback = on_press;
 }
 
 void button_task_handle(void)
@@ -48,7 +49,7 @@ void button_task_handle(void)
         {
             button_state = PRESSES;
             button_count++;
-            led_task_next_state();
+            button_task_callback();
         }
         break;
     case PRESSES:

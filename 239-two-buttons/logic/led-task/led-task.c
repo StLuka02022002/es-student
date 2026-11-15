@@ -7,7 +7,7 @@ static uint64_t half_period_us;
 static led_state_t led_state;
 static uint64_t last_toggle_us;
 
-static uint32_t around_period_ms[] = {200, 500, 1000};
+static uint32_t around_period_ms[] = {250, 500, 1000};
 static uint32_t size_around_period = sizeof(around_period_ms) / sizeof(around_period_ms[0]);
 static size_t current_around_period_index = 0;
 

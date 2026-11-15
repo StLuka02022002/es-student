@@ -10,7 +10,6 @@
 #include "profiling/profiling.h"
 #include "stdio-text-protocol/stdio-text-protocol.h"
 
-
 typedef enum stopwatch
 {
 	STOPWATCH_LOOP,
@@ -25,8 +24,8 @@ int main()
 	platform_init();
 	stdio_text_protocol_init();
 	led_task_init();
-	button_task_init(1,led_task_next_state);
-	button_task_init(2,led_task_next_period);
+	button_task_init(PLATFORM_BUTTON_LED, led_task_next_state, led_task_blink);
+	button_task_init(PLATFORM_BUTTON_PERIOD, led_task_next_period, NULL);
 	pi_task_init();
 
 	profiling_init();

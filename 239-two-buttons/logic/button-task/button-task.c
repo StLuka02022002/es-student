@@ -8,6 +8,7 @@
 #include "systime/systime.h"
 
 #define DEBOUNCE_US 20000
+#define DEBOUNCE_LONG_US 1000000
 
 typedef enum
 {
@@ -22,20 +23,24 @@ typedef struct
     uint64_t last_press_us;
     uint32_t button_count;
     button_state_t button_state;
-    button_task_callback_t button_task_callback;
+    button_task_callback_t button_task_callback_on_press;
+    button_task_callback_t button_task_callback_long;
+    bool is_long;
 } button_task_state_t;
 
 static button_task_state_t button_task_state[PLATFORM_BUTTON_COUNT] = {0};
 static bool button_inits[PLATFORM_BUTTON_COUNT] = {false};
 
-void button_task_init(uint32_t id, button_task_callback_t on_press)
+void button_task_init(uint32_t id, button_task_callback_t on_press, button_task_callback_t long_press)
 {
     if (id < PLATFORM_BUTTON_COUNT)
     {
         button_task_state[id].last_press_us = systime_us();
         button_task_state[id].button_count = 0;
         button_task_state[id].button_state = RELEASE;
-        button_task_state[id].button_task_callback = on_press;
+        button_task_state[id].button_task_callback_on_press = on_press;
+        button_task_state[id].button_task_callback_long = long_press;
+        button_task_state[id].is_long = false;
         button_inits[id] = true;
     }
 }
@@ -43,7 +48,8 @@ void button_task_init(uint32_t id, button_task_callback_t on_press)
 static void button_task_handle_one(uint32_t id, button_task_state_t *state)
 {
     bool raw = false;
-    if (!platform_button_read(id, &raw)){
+    if (!platform_button_read(id, &raw))
+    {
         return;
     }
 
@@ -63,9 +69,6 @@ static void button_task_handle_one(uint32_t id, button_task_state_t *state)
         else if (now - state->last_press_us > DEBOUNCE_US)
         {
             state->button_state = PRESSES;
-            state->button_count++;
-            if (state->button_task_callback)
-                state->button_task_callback();
         }
         break;
     case PRESSES:
@@ -74,12 +77,27 @@ static void button_task_handle_one(uint32_t id, button_task_state_t *state)
             state->button_state = IS_RELEASING;
             state->last_press_us = now;
         }
+        else if (now - state->last_press_us > DEBOUNCE_LONG_US && !state->is_long)
+        {
+            if (state->button_task_callback_long)
+            {
+                state->button_task_callback_long();
+                state->is_long = true;
+            }
+        }
         break;
     case IS_RELEASING:
         if (raw)
             state->button_state = PRESSES;
         else if (now - state->last_press_us > DEBOUNCE_US)
+        {
             state->button_state = RELEASE;
+            state->button_count++;
+            if (state->button_task_callback_on_press && !state->is_long)
+                state->button_task_callback_on_press();
+            state->is_long = false;
+        }
+
         break;
     }
 }
@@ -111,6 +129,7 @@ bool button_task_get_press_count(uint32_t id, uint32_t *result)
     return true;
 }
 
-size_t button_task_get_buttons_count(void){
+size_t button_task_get_buttons_count(void)
+{
     return PLATFORM_BUTTON_COUNT;
 }

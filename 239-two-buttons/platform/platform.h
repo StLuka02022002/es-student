@@ -3,10 +3,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define BUTTON_PIN 15
-#define BUTTON_TWO_PIN 14
+#define PLATFORM_BUTTON_LED 0
+#define PLATFORM_BUTTON_PERIOD 1
 #define PLATFORM_BUTTON_COUNT 2
-#define LED_PIN 25
 
 void platform_init(void);
 

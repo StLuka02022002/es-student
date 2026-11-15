@@ -8,7 +8,7 @@
 
 typedef void (*button_task_callback_t)(void);
 
-void button_task_init(uint32_t id, button_task_callback_t on_press);
+void button_task_init(uint32_t id, button_task_callback_t on_press, button_task_callback_t long_press);
 void button_task_handle(void);
 
 bool button_task_is_pressed(uint32_t id, bool *result);

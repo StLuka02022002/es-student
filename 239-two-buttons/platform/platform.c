@@ -2,13 +2,22 @@
 
 #include "hardware/gpio.h"
 
-static uint32_t platform_buttons[] = {BUTTON_PIN, BUTTON_TWO_PIN};
+#define BUTTON_PIN 15
+#define BUTTON_TWO_PIN 14
+
+#define LED_PIN 25
+
+static uint32_t platform_buttons[PLATFORM_BUTTON_COUNT];
 
 void platform_init(void)
 {
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
     platform_led_set(false);
+
+    platform_buttons[PLATFORM_BUTTON_LED] = BUTTON_PIN;
+    platform_buttons[PLATFORM_BUTTON_PERIOD] = BUTTON_TWO_PIN;
+
     for (size_t i = 0; i < PLATFORM_BUTTON_COUNT; i++)
     {
         gpio_init(platform_buttons[i]);

@@ -66,6 +66,11 @@ void led_task_next_period(void)
     led_task_set_period_ms(around_period_ms[current_around_period_index]);
 }
 
+void led_task_blink(void)
+{
+    led_task_set_state(LED_STATE_BLINK);
+}
+
 void led_task_set_state(led_state_t state)
 {
     led_state = state;

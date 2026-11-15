@@ -1,0 +1,252 @@
+#include "api-commands.h"
+
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+#include <ctype.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+#include "device/device.h"
+#include "systime/systime.h"
+#include "profiling/profiling.h"
+
+#include "firmware.h"
+#include "led-task/led-task.h"
+#include "pi-task/pi-task.h"
+#include "button-task/button-task.h"
+
+static void cmd_info(const command_t *);
+static void cmd_uptime(const command_t *);
+static void cmd_led_enable(const command_t *);
+static void cmd_led_disable(const command_t *);
+static void cmd_led_blink(const command_t *);
+static void cmd_led_period(const command_t *);
+static void cmd_button(const command_t *);
+static void cmd_pi_start(const command_t *);
+static void cmd_pi(const command_t *);
+static void cmd_profiling(const command_t *);
+static void cmd_profiling_reset(const command_t *);
+
+static void print_led_state(void);
+static bool parse_u32(const char *text, uint32_t *value);
+const api_command_t api_commands[] = {
+    {"info", "device pasport", cmd_info},
+    {"uptime", "time since reset", cmd_uptime},
+    {"led_enable", "set LED to ON state", cmd_led_enable},
+    {"led_disable", "set LED to OFF state", cmd_led_disable},
+    {"led_blink", "set LED to BLINK state", cmd_led_blink},
+    {"led_period", "set blink period", cmd_led_period},
+    {"button", "button state and press count", cmd_button},
+    {"pi_start", "start pi calculation", cmd_pi_start},
+    {"pi", "pi calculation result or state", cmd_pi},
+    {"profiling", "stopwatch results", cmd_profiling},
+    {"profiling_reset", "reset stopwatch results", cmd_profiling_reset},
+};
+
+const uint32_t api_command_count = sizeof(api_commands) / sizeof(api_commands[0]);
+
+static void cmd_info(const command_t *command)
+{
+    device_info_t info = {0};
+    device_get_info(&info);
+    printf("name: %s\n", FIRMWARE_NAME);
+    printf("version: %s\n", FIRMWARE_VERSION);
+    printf("project: %s\n", FIRMWARE_PROJECT);
+    printf("repo: %s\n", FIRMWARE_REPO);
+    printf("board: %s\n", info.board);
+    printf("serial: %s\n", &info.board_id[0]);
+    printf("chip: manufacturer 0x%03x, part 0x%04x, revision %u\n",
+           (unsigned)info.manufacturer, (unsigned)info.part, (unsigned)info.revision);
+    printf("pico-sdk: %s\n", info.pico_sdk);
+}
+
+static void cmd_uptime(const command_t *)
+{
+    printf("uptime: %llu ms\n", systime_ms());
+}
+
+static void cmd_led_enable(const command_t *)
+{
+    led_task_set_state(LED_STATE_ON);
+    print_led_state();
+}
+
+static void cmd_led_disable(const command_t *)
+{
+    led_task_set_state(LED_STATE_OFF);
+    print_led_state();
+}
+
+static void cmd_led_blink(const command_t *)
+{
+    led_task_set_state(LED_STATE_BLINK);
+    print_led_state();
+}
+
+static void cmd_led_period(const command_t *command)
+{
+    uint32_t period_ms;
+
+    if (command->argc < 1 || !parse_u32(command->argv[0], &period_ms))
+    {
+        printf("error: usage led_period <period_ms>\n");
+        return;
+    }
+    if (!led_task_set_period_ms(period_ms))
+    {
+        printf("error: period_ms must be greater than 0\n");
+        return;
+    }
+
+    print_led_state();
+}
+
+static void print_led_state(void)
+{
+    printf("led: ");
+    switch (led_task_get_state())
+    {
+    case LED_STATE_ON:
+    {
+        printf("on");
+        break;
+    }
+    case LED_STATE_OFF:
+    {
+        printf("off");
+        break;
+    }
+    case LED_STATE_BLINK:
+    {
+        printf("blink");
+        break;
+    }
+    }
+    printf(", period %u ms\n", (unsigned)led_task_get_period_ms());
+}
+
+static void cmd_button(const command_t *)
+{
+    for (size_t i = 0; i < button_task_get_buttons_count(); i++)
+    {
+        bool isPress = false;
+        uint32_t countPress = 0;
+        if (button_task_is_pressed(i, &isPress) && button_task_get_press_count(i, &countPress))
+        {
+            printf("button %u: %s, presses %u\n", i,
+                   isPress ? "pressed" : "released", (unsigned)countPress);
+        }
+    }
+}
+
+static void cmd_pi_start(const command_t *command)
+{
+    uint32_t terms = 0;
+
+    if (command->argc == 0)
+    {
+        terms = pi_task_get_terms();
+    }
+    else if (command->argc > 1 || !parse_u32(command->argv[0], &terms))
+    {
+        printf("error: usage pi_start [<terms>]\n");
+        return;
+    }
+
+    if (!pi_task_set_terms(terms))
+    {
+        printf("error: terms must be greater than 0\n");
+        return;
+    }
+
+    if (!pi_task_start())
+    {
+        printf("error: pi is busy\n");
+        return;
+    }
+
+    printf("pi: started, %lu terms\n", pi_task_get_terms());
+}
+
+static void cmd_pi(const command_t *)
+{
+    switch (pi_task_get_state())
+    {
+    case NOT_START:
+        printf("pi: not started\n");
+        break;
+    case CALCUTATE:
+        printf("pi: running\n");
+        break;
+    case FINISH:
+        printf("pi: %.9f in %lu ms\n", pi_task_get_result(), pi_task_get_time_calculate());
+        break;
+    default:
+        break;
+    }
+}
+
+static void cmd_profiling(const command_t *)
+{
+    if (!PROFILING_ENABLED)
+    {
+        printf("profiling is disabled in this build");
+        return;
+    }
+    printf("profiling\n");
+    for (size_t i = 0; i < COUNT_PROFILING_STOPWATCH; i++)
+    {
+        profiling_result_t result = {0};
+        if (profiling_get(i, &result))
+        {
+            double mean = result.count
+                              ? (double)result.avg_sum_us / (double)result.count
+                              : 0.0;
+
+            printf("%-10s count %lu   mean %.2f us   max %lu us\n",
+                   result.name, result.count, mean, result.max_us);
+        }
+    }
+}
+
+static void cmd_profiling_reset(const command_t *)
+{
+    if (!PROFILING_ENABLED)
+    {
+        printf("profiling is disabled in this build");
+        return;
+    }
+    profiling_reset();
+    printf("profiling reset\n");
+}
+
+static bool parse_u32(const char *text, uint32_t *value)
+{
+    if (text == NULL || *text == '\0')
+    {
+        return false;
+    }
+
+    if (!isdigit((unsigned char)text[0]))
+    {
+        return false;
+    }
+
+    char *end = NULL;
+    errno = 0;
+    unsigned long number = strtoul(text, &end, 10);
+
+    if (end == text || *end != '\0' || errno == ERANGE)
+    {
+        return false;
+    }
+
+    if (number > UINT32_MAX)
+    {
+        return false;
+    }
+
+    *value = (uint32_t)number;
+    return true;
+}

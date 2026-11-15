@@ -26,6 +26,7 @@ int main()
 	stdio_text_protocol_init();
 	led_task_init();
 	button_task_init(1,led_task_next_state);
+	button_task_init(2,led_task_next_period);
 	pi_task_init();
 
 	profiling_init();

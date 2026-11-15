@@ -7,6 +7,10 @@ static uint64_t half_period_us;
 static led_state_t led_state;
 static uint64_t last_toggle_us;
 
+static uint32_t around_period_ms[] = {200, 500, 1000};
+static uint32_t size_around_period = sizeof(around_period_ms) / sizeof(around_period_ms[0]);
+static size_t current_around_period_index = 0;
+
 static bool led_state_pin;
 
 void led_task_init(void)
@@ -52,6 +56,16 @@ void led_task_next_state(void)
     }
 }
 
+void led_task_next_period(void)
+{
+    current_around_period_index++;
+    if (current_around_period_index > size_around_period)
+    {
+        current_around_period_index = 0;
+    }
+    led_task_set_period_ms(around_period_ms[current_around_period_index]);
+}
+
 void led_task_set_state(led_state_t state)
 {
     led_state = state;
@@ -61,7 +75,7 @@ void led_task_set_state(led_state_t state)
         platform_led_set(false);
         break;
     case LED_STATE_ON:
-       platform_led_set(true);
+        platform_led_set(true);
         break;
     case LED_STATE_BLINK:
         platform_led_set(!platform_led_read());

@@ -5,11 +5,11 @@
 #include "pi-task/pi-task.h"
 #include "led-task/led-task.h"
 #include "button-task/button-task.h"
+#include "telemetry-task/telemetry-task.h"
 
 #include "logging/log.h"
 #include "profiling/profiling.h"
 #include "stdio-text-protocol/stdio-text-protocol.h"
-
 
 typedef enum stopwatch
 {
@@ -18,6 +18,7 @@ typedef enum stopwatch
 	STOPWATCH_LED,
 	STOPWATCH_BUTTON,
 	STOPWATCH_PI,
+	STOPWATCH_TELEMETRY
 } stopwatch;
 
 int main()
@@ -26,6 +27,7 @@ int main()
 	stdio_text_protocol_init();
 	led_task_init();
 	button_task_init(led_task_next_state);
+	telemetry_task_init(api_print_telemetry);
 	pi_task_init();
 
 	profiling_init();
@@ -35,6 +37,7 @@ int main()
 	profiling_stopwatch_init(STOPWATCH_LED, "led");
 	profiling_stopwatch_init(STOPWATCH_BUTTON, "button");
 	profiling_stopwatch_init(STOPWATCH_PI, "pi");
+	profiling_stopwatch_init(STOPWATCH_TELEMETRY, "telemetry");
 
 	LOG_INF("%s %s\n", FIRMWARE_NAME, FIRMWARE_VERSION);
 
@@ -61,6 +64,10 @@ int main()
 		profiling_start(STOPWATCH_PI);
 		pi_task_handle();
 		profiling_stop(STOPWATCH_PI);
+
+		profiling_start(STOPWATCH_TELEMETRY);
+		telemetry_task_handle();
+		profiling_stop(STOPWATCH_TELEMETRY);
 
 		profiling_stop(STOPWATCH_LOOP);
 	}

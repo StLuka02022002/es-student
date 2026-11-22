@@ -17,6 +17,8 @@
 #include "button-task/button-task.h"
 #include "platform/platform.h"
 
+#include "telemetry-task/telemetry-task.h"
+
 static void cmd_info(const command_t *);
 static void cmd_uptime(const command_t *);
 static void cmd_led_enable(const command_t *);
@@ -30,6 +32,8 @@ static void cmd_profiling(const command_t *);
 static void cmd_profiling_reset(const command_t *);
 static void cmd_get_voltage(const command_t *);
 static void cmd_get_temp(const command_t *);
+static void cmd_tm_start(const command_t *);
+static void cmd_tm_stop(const command_t *);
 
 static void print_led_state(void);
 static bool parse_u32(const char *text, uint32_t *value);
@@ -45,9 +49,16 @@ const api_command_t api_commands[] = {
     {"pi", "pi calculation result or state", cmd_pi},
     {"profiling", "stopwatch results", cmd_profiling},
     {"profiling_reset", "reset stopwatch results", cmd_profiling_reset},
-    {"get_voltage","voltage on GP26, ADC input 0", cmd_get_voltage},
-    {"get_temp","chip temperature, degrees Celsius", cmd_get_temp},
+    {"get_voltage", "voltage on GP26, ADC input 0", cmd_get_voltage},
+    {"get_temp", "chip temperature, degrees Celsius", cmd_get_temp},
+    {"tm_start", "start telemety", cmd_tm_start},
+    {"tm_stop", "stop telemetry", cmd_tm_stop},
 };
+
+void api_print_telemetry(const telemetry_record_t *record)
+{
+    printf("tm: %llu %.3f %.1f\n", record->time_us, record->voltage_v, record->temp_c);
+}
 
 const uint32_t api_command_count = sizeof(api_commands) / sizeof(api_commands[0]);
 
@@ -248,12 +259,44 @@ static bool parse_u32(const char *text, uint32_t *value)
     return true;
 }
 
-static void cmd_get_voltage(const command_t *command){
+static void cmd_get_voltage(const command_t *command)
+{
     float voltage = platform_voltage_read();
     printf("voltage: %.3f V\n", voltage);
 }
 
-static void cmd_get_temp(const command_t *command){
+static void cmd_get_temp(const command_t *command)
+{
     float temp = platform_temp_read();
     printf("temp: %.1f C\n", temp);
+}
+
+static void cmd_tm_start(const command_t *command)
+{
+    uint32_t period_ms = 0;
+
+    if (command->argc == 0)
+    {
+        period_ms = telemetry_task_get_period_ms();
+    }
+    else if (command->argc > 1 || !parse_u32(command->argv[0], &period_ms))
+    {
+        printf("error: usage tm_start [<period_ms>]\n");
+        return;
+    }
+
+    if (!telemetry_task_start(period_ms))
+    {
+        printf("error: period_ms must be at least 10\n");
+        return;
+    }
+
+    printf("telimetry: started, period %lu ms\n", telemetry_task_get_period_ms());
+}
+
+static void cmd_tm_stop(const command_t *command)
+{
+    telemetry_task_stop();
+
+    printf("telimetry: startpped\n");
 }

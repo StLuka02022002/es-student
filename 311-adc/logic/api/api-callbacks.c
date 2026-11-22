@@ -34,6 +34,8 @@ static void cmd_get_voltage(const command_t *);
 static void cmd_get_temp(const command_t *);
 static void cmd_tm_start(const command_t *);
 static void cmd_tm_stop(const command_t *);
+static void cmd_charge_on(const command_t *);
+static void cmd_charge_off(const command_t *);
 
 static void print_led_state(void);
 static bool parse_u32(const char *text, uint32_t *value);
@@ -53,6 +55,8 @@ const api_command_t api_commands[] = {
     {"get_temp", "chip temperature, degrees Celsius", cmd_get_temp},
     {"tm_start", "start telemety", cmd_tm_start},
     {"tm_stop", "stop telemetry", cmd_tm_stop},
+    {"charge_on", "charge on", cmd_charge_on},
+    {"charge_off", "charge off", cmd_charge_off},
 };
 
 void api_print_telemetry(const telemetry_record_t *record)
@@ -299,4 +303,16 @@ static void cmd_tm_stop(const command_t *command)
     telemetry_task_stop();
 
     printf("telemetry: stopped\n");
+}
+
+static void cmd_charge_on(const command_t *command)
+{
+    platform_charge_set(true);
+    printf("charge: on\n");
+}
+
+static void cmd_charge_off(const command_t *command)
+{
+    platform_charge_set(false);
+    printf("charge: off\n");
 }

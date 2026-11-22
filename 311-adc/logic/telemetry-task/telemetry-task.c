@@ -3,7 +3,7 @@
 
 #include "platform/platform.h"
 #include "systime/systime.h"
-#define DEFAULT_PERIOD_MS 100
+
 
 telemetry_task_callback_t telemetry_task_callback;
 telemetry_state_t telemetry_state;
@@ -19,7 +19,7 @@ void telemetry_task_init(telemetry_task_callback_t on_record)
     }
     telemetry_state = TELEMETRY_STATE_IDLE;
     last_toggle_us = systime_us();
-    period_us = DEFAULT_PERIOD_MS * 1000;
+    period_us = TELEMETRY_TASK_DEFAULT_PERIOD_MS * 1000;
 }
 
 void telemetry_task_handle(void)

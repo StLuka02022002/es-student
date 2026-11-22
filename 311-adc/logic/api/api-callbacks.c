@@ -277,7 +277,7 @@ static void cmd_tm_start(const command_t *command)
 
     if (command->argc == 0)
     {
-        period_ms = telemetry_task_get_period_ms();
+        period_ms = TELEMETRY_TASK_DEFAULT_PERIOD_MS;
     }
     else if (command->argc > 1 || !parse_u32(command->argv[0], &period_ms))
     {
@@ -291,12 +291,12 @@ static void cmd_tm_start(const command_t *command)
         return;
     }
 
-    printf("telimetry: started, period %lu ms\n", telemetry_task_get_period_ms());
+    printf("telemetry: started, period %lu ms\n", telemetry_task_get_period_ms());
 }
 
 static void cmd_tm_stop(const command_t *command)
 {
     telemetry_task_stop();
 
-    printf("telimetry: startpped\n");
+    printf("telemetry: stopped\n");
 }

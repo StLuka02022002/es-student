@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#define TELEMETRY_TASK_DEFAULT_PERIOD_MS 100
+
 typedef enum {
     TELEMETRY_STATE_IDLE,
     TELEMETRY_STATE_RUN,

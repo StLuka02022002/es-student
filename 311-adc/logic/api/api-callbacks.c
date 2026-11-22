@@ -29,6 +29,7 @@ static void cmd_pi(const command_t *);
 static void cmd_profiling(const command_t *);
 static void cmd_profiling_reset(const command_t *);
 static void cmd_get_voltage(const command_t *);
+static void cmd_get_temp(const command_t *);
 
 static void print_led_state(void);
 static bool parse_u32(const char *text, uint32_t *value);
@@ -45,6 +46,7 @@ const api_command_t api_commands[] = {
     {"profiling", "stopwatch results", cmd_profiling},
     {"profiling_reset", "reset stopwatch results", cmd_profiling_reset},
     {"get_voltage","voltage on GP26, ADC input 0", cmd_get_voltage},
+    {"get_temp","chip temperature, degrees Celsius", cmd_get_temp},
 };
 
 const uint32_t api_command_count = sizeof(api_commands) / sizeof(api_commands[0]);
@@ -249,4 +251,9 @@ static bool parse_u32(const char *text, uint32_t *value)
 static void cmd_get_voltage(const command_t *command){
     float voltage = platform_voltage_read();
     printf("voltage: %.3f V\n", voltage);
+}
+
+static void cmd_get_temp(const command_t *command){
+    float temp = platform_temp_read();
+    printf("temp: %.3f C\n", temp);
 }

@@ -13,3 +13,5 @@ bool platform_led_read(void);
 bool platform_button_read(void);
 
 float platform_voltage_read(void);
+
+float platform_temp_read(void);

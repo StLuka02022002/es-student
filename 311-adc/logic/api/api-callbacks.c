@@ -255,5 +255,5 @@ static void cmd_get_voltage(const command_t *command){
 
 static void cmd_get_temp(const command_t *command){
     float temp = platform_temp_read();
-    printf("temp: %.3f C\n", temp);
+    printf("temp: %.1f C\n", temp);
 }

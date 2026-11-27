@@ -6,6 +6,17 @@
 #define BUTTON_PIN 15
 #define LED_PIN 25
 
+#define PLATFORM_CAPTURE_MAX 2000
+
+typedef struct{
+    const uint16_t *samples;
+    uint32_t count;
+    uint32_t period_us;
+    uint32_t min_interval_us;
+    uint32_t max_interval_us;
+    float handler_percent;
+} platform_capture_t;
+
 void platform_init(void);
 
 void platform_led_set(bool on);
@@ -22,3 +33,11 @@ void platform_charge_set(bool on);
 bool platform_blink_start(uint32_t period_ms);
 
 uint32_t platform_blink_stop(void);
+
+bool platform_adc_busy(void);
+
+bool platform_capture_start(uint32_t count, uint32_t period_us);
+
+bool platform_capture_done(void);
+
+void platform_capture_get(platform_capture_t *capture);

@@ -403,19 +403,17 @@ static void cmd_cap_dump(const command_t *)
     platform_capture_get(&capture);
     printf("capture: %u samples, period %u us, interval %u..%u us, handler %.1f %%\n",
            capture.count, capture.period_us, capture.min_interval_us, capture.max_interval_us, capture.handler_percent * 100);
-    int32_t count = 0;
-    printf("cap:");
+    uint32_t count = 0;
     while (count < capture.count)
     {
-        if (count % 16 == 0 && count != 0)
-        {
-            printf("\n%u", capture.samples[count]);
-        }
-        else
+        printf("cap:");
+        uint32_t id = 0;
+        while (count < capture.count & id < 16)
         {
             printf(" %u", capture.samples[count]);
+            id++;
+            count++;
         }
-        count++;
+        printf("\n");
     }
-    printf("\n");
 }

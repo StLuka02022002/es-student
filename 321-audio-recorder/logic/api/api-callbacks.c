@@ -401,8 +401,8 @@ static void cmd_cap_dump(const command_t *)
 
     platform_capture_t capture = {0};
     platform_capture_get(&capture);
-    printf("capture: %u samples, period %u us, interval %u..%u us, handler %.1f %%.\n", capture.count,
-           capture.period_us, capture.min_interval_us, capture.max_interval_us, capture.handler_percent * 100);
+    printf("capture: %u samples, period %u us, interval %u..%u us, handler %.1f %%\n",
+           capture.count, capture.period_us, capture.min_interval_us, capture.max_interval_us, capture.handler_percent * 100);
     int32_t count = 0;
     printf("cap:");
     while (count < capture.count)
